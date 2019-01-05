@@ -1,0 +1,44 @@
+.jumbotron {
+  background: #fff !important;
+  margin-top: 30px;
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+}
+
+.footer {
+  position: absolute;
+  bottom: 0;
+  width: 50%;
+  margin: 0 auto;
+  height: 60px;
+  line-height: 60px;
+  background-color: transparent;
+}
+
+.errorbackend {
+  margin-top: 30px;
+}
+
+.DraftEditor-root {
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 10px;
+}
+
+footer {
+  width: 100% !important;
+  background-color: #fff !important;
+  padding-left: 30px;
+  padding-top: 2px;
+}
+
+h1 {
+  padding-bottom: 30px;
+}
