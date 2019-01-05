@@ -17,14 +17,18 @@ export default class Footer extends React.Component {
             $(".link-imprint").html(data.split("\n")[0].replace("<h1>", "").replace("</h1>", ""));
         });
 
-        $(".appname").html(config["appname"]);
+        $.getJSON(config["api"] + "/api/v1/config", function(data) {
+            $(".app-name").html(data["appname"]);
+          }).fail(function() {
+            $(".app-name").html(config["appname"]);
+        });
     }
     render() {
         return (
             //Render Footer
             <div>
                 <footer className="footer">
-                    <span className="text-muted">&copy; <span className="year"></span> <span class="appname"></span> | <a href="/privacy" className="link-privacy" rel="noopener noreferrer">Datenschutz</a> | <a href="/imprint" className="link-imprint" rel="noopener noreferrer">Impressum</a></span>
+                    <span className="text-muted">&copy; <span className="year"></span> <span class="app-name"></span> | <a href="/privacy" className="link-privacy" rel="noopener noreferrer">Datenschutz</a> | <a href="/imprint" className="link-imprint" rel="noopener noreferrer">Impressum</a></span>
                 </footer>
             </div>
         );
