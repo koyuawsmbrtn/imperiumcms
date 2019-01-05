@@ -64,12 +64,16 @@ export default class Navigation extends React.Component {
         $(".app-name").html(config["appname"]);
       });
 
-      //Set titles for Navigation.js (using content API)
-      $.get(config["api"] + "/api/v1/content/about", function(data) {
-        $(".link-about").html(decodeHtmlEntity(data).split("\n")[0].replace("<h1>", "").replace("</h1>", ""));
-      });
-      $.get(config["api"] + "/api/v1/content/s2", function(data) {
-        $(".link-s2").html(decodeHtmlEntity(data).split("\n")[0].replace("<h1>", "").replace("</h1>", ""));
+      $.getJSON(config["api"] + "/api/v1/get/pages", function(data) {
+        $(".navbar-nav").html("");
+        data.forEach(function(i) {
+          $.get(config["api"] + "/api/v1/content/" + i, function(data2) {
+            if (i !== "privacy" && i !== "imprint" && i !== "terms" && i !== "home") {
+              $(".navbar-nav").append("<li class=\"nav-item\"><a href=\"/" + i + "\" class=\"" + i + "-text nav-link\"></a></li>");
+              $("." + i + "-text").html(decodeHtmlEntity(data2).split("\n")[0].replace("<h1>", "").replace("</h1>", ""));
+            }
+          });
+        });
       });
   }
   render() {
@@ -82,15 +86,9 @@ export default class Navigation extends React.Component {
           <NavbarToggler onClick={this.toggle} />
           <Collapse isOpen={this.state.isOpen} navbar>
             <Nav navbar>
-              <NavItem>
-                <NavLink className="link-about" href="/about">Über <span className="app-name">app</span></NavLink>
-              </NavItem>
-              <NavItem>
-                <NavLink style={{display: "none"}} className="link-access" href="/access">Administration</NavLink>
-              </NavItem>
-              <NavItem>
-                <NavLink className="link-s2" href="/s2">Sample Page</NavLink>
-              </NavItem>
+              <ul class="navbar-nav">
+              
+              </ul>
             </Nav>
           </Collapse>
         </Navbar>

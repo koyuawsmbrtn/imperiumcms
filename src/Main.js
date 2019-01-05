@@ -53,6 +53,7 @@ export default class Main extends React.Component {
     });
 
     //Page titles
+    /*
     $.get(config["api"] + "/api/v1/content/s2", function(data) {
       $(".s2-text").html(decodeHtmlEntity(data).split("\n")[0].replace("<h1>", "").replace("</h1>", ""));
     });
@@ -67,6 +68,16 @@ export default class Main extends React.Component {
     });
     $.get(config["api"] + "/api/v1/content/home", function(data) {
       $(".home-text").html(decodeHtmlEntity(data).split("\n")[0].replace("<h1>", "").replace("</h1>", ""));
+    });*/
+
+    $.getJSON(config["api"] + "/api/v1/get/pages", function(data) {
+      $("#select-page").html("<option></option>");
+      data.forEach(function(i) {
+        $.get(config["api"] + "/api/v1/content/" + i, function(data2) {
+          $("#select-page").append("<option value=\"" + i + "\" class=\"" + i + "-text\"></option>");
+          $("." + i + "-text").html(decodeHtmlEntity(data2).split("\n")[0].replace("<h1>", "").replace("</h1>", ""));
+        });
+      });
     });
 
     $(".username").html(localStorage.getItem("username"));
@@ -249,6 +260,18 @@ export default class Main extends React.Component {
 
     //Handle back button
     $("#backbutton").click(function() { window.location.reload(); })
+
+    var currentPage = window.location.href.split("/")[3]
+    if (currentPage !== "" && currentPage !== "access") {
+      $.get(config["api"] + "/api/v1/content/" + window.location.href.split("/")[3], function(data) {
+        $(".jumbotron").html(data);
+      });
+    }
+    if (currentPage === "") {
+      $.get(config["api"] + "/api/v1/content/home", function(data) {
+        $(".jumbotron").html(data);
+      });
+    }
   }
 
   render() {
@@ -326,12 +349,7 @@ export default class Main extends React.Component {
             <FormGroup row>
               <Label for="select-page">Choose Page</Label>
               <Input type="select" name="select-page" id="select-page">
-                <option></option>
-                <option value="about" className="about-text"></option>
-                <option value="s2" className="s2-text"></option>
-                <option value="privacy" className="privacy-text"></option>
-                <option value="imprint" className="imprint-text"></option>
-                <option value="home" className="home-text"></option>
+                
               </Input>
             </FormGroup>
             <FormGroup row>

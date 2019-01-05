@@ -166,6 +166,13 @@ def deluser(username, sid, usertodelete):
                 response.content_type = "application/json"
                 return json.dumps({"error": "nodeluser"})
 
+@get("/api/v1/get/pages")
+def getpages():
+        response.headers['Access-Control-Allow-Origin'] = '*'
+        response.content_type = "application/json"
+        plist = os.popen("ls content/").read().replace(".html", "").split("\n")
+        return json.dumps(plist)
+
 # Service Worker
 @get("/service-worker.js")
 def serviceworker():
@@ -191,16 +198,20 @@ def hello():
     return json.dumps(hello)
 
 @get("/")
-@get("/about")
-@get("/s2")
-@get("/access")
-@get("/privacy")
-@get("/imprint")
 def index():
     return static_file("index.html", root="build/")
 
 @get("/<filename>")
 def findex(filename):
-    return static_file(filename, root="build/")
+    try:
+        if not filename == "access":
+            filename = ".".join(filename.split(".")[1:])
+            ending = filename.split(".")[:1][0]
+            return static_file(filename + ending, root="build/")
+        else:
+            return static_file("index.html", root="build/")
+    except:
+        return static_file("index.html", root="build/")
+        
 
 run(server="tornado", host="0.0.0.0", port=8080)
