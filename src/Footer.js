@@ -28,7 +28,7 @@ export default class Footer extends React.Component {
             //Render Footer
             <div>
                 <footer className="footer">
-                    <span className="text-muted">&copy; <span className="year"></span> <span className="app-name"></span> | <a href="/privacy" className="link-privacy" rel="noopener noreferrer">Datenschutz</a> | <a href="/imprint" className="link-imprint" rel="noopener noreferrer">Impressum</a></span>
+                    <span className="text-muted">&copy; <span className="year"></span> <span className="app-name"></span> | <a href="/privacy" className="link-privacy" rel="noopener noreferrer"></a> | <a href="/imprint" className="link-imprint" rel="noopener noreferrer"></a></span>
                 </footer>
             </div>
         );
