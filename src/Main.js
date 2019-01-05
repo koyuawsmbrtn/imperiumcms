@@ -45,20 +45,24 @@ export default class Main extends React.Component {
     $("#stop").hide();
     $("#adduser").hide();
     $("#deluser").hide();
-    $("#pages-button").hide();
     $(".deluser-panel").hide();
     $(".adduser-panel").hide();
     $(".pages-panel").hide();
+    $("#delpage").hide();
+    $(".deletepage-panel").hide();
     $(".login-frontend").click(function() {
       //console.log("login!");
     });
 
+    //Page selection
     $.getJSON(config["api"] + "/api/v1/get/pages", function(data) {
-      $("#select-page").html("<option></option>");
+      $(".pageselector").html("<option></option>");
       data.forEach(function(i) {
         $.get(config["api"] + "/api/v1/content/" + i, function(data2) {
-          $("#select-page").append("<option value=\"" + i + "\" class=\"" + i + "-text\"></option>");
-          $("." + i + "-text").html(decodeHtmlEntity(data2).split("\n")[0].replace("<h1>", "").replace("</h1>", ""));
+          if (i !== "") {
+            $(".pageselector").append("<option value=\"" + i + "\" class=\"" + i + "-text\"></option>");
+            $("." + i + "-text").html(decodeHtmlEntity(data2).split("\n")[0].replace("<h1>", "").replace("</h1>", ""));
+          }
         });
       });
     });
@@ -77,21 +81,30 @@ export default class Main extends React.Component {
             $("#stop").show();
           } else if (role === "partner") {
             $(".role").html("Partner");
+            $("#adduser").hide();
+            $("#deluser").hide();
             $("#adduser-button").hide();
             $("#deluser-button").hide();
           } else if (role === "author") {
             $(".role").html("Author");
-            $("#pages-button").show();
+            $("#adduser").hide();
+            $("#deluser").hide();
+            $("#delpage").show();
+            $("#delpage-button").show();
             $("#adduser-button").hide();
             $("#deluser-button").hide();
           } else {
             $(".role").html("User");
+            $("#adduser").hide();
+            $("#deluser").hide();
             $("#adduser-button").hide();
             $("#deluser-button").hide();
           }
           if (role === "god" || role === "admin") {
-            $("#adduser-button").show();
-            $("#deluser-button").show();
+            $("#delpage").show();
+            $("#delpage-button").show();
+            $("#adduser").show();
+            $("#deluser").show();
           }
         });
       }
@@ -216,16 +229,24 @@ export default class Main extends React.Component {
 
     $("#select-page").change(function() {
       $.get(config["api"] + "/api/v1/content/" + $("#select-page").val(), function(data) {
-        $("#title-page").attr("value", decodeHtmlEntity(data).split("\n")[0].replace("<h1>", "").replace("</h1>", ""));
+        $("#title-page").val(decodeHtmlEntity(data).split("\n")[0].replace("<h1>", "").replace("</h1>", ""));
         $(".ql-editor").html(decodeHtmlEntity(data).split("\n").slice(1).join("\n"));
+        $("#permalink").html($("#select-page").val());
       }).fail(function() {
-        $("#title-page").attr("value", "");
+        $("#title-page").val("");
+        $("#permalink").html($("#select-page").val());
         $(".ql-editor").html("");
       });
     });
 
+    $("#title-page").keyup(function() {
+      if ($("#select-page").val() === "") {
+        $("#permalink").html($("#title-page").val().replace(/[^a-zA-Z ]/g, "").split(" ").join("-").toLowerCase());
+      }
+    });
+
     $("#submit-page").click(function() {
-      $.post(config["api"] + "/api/v1/change/page/" + localStorage.getItem("username") + "/" + localStorage.getItem("sessionid") + "/" + $("#select-page").val() + "/" + $("#title-page").val(), {content: encodeHtmlEntity($(".ql-editor").html())}, function(data) {
+      $.post(config["api"] + "/api/v1/change/page/" + localStorage.getItem("username") + "/" + localStorage.getItem("sessionid") + "/" + $("#permalink").html() + "/" + $("#title-page").val(), {content: encodeHtmlEntity($(".ql-editor").html())}, function(data) {
         if (data["changed"] === "true") {
           localStorage.setItem("success", "true");
           window.location.reload();
@@ -240,8 +261,7 @@ export default class Main extends React.Component {
 
     $("button").click(function() {
       //Display back button if lost
-      var attr = $(".user").attr("display");
-      if (window.location.href.indexOf("/access") > -1) {
+      if (window.location.href.indexOf("/admin") > -1) {
         $("#backbutton").show();
       } else {
         $("#backbutton").hide();
@@ -252,7 +272,7 @@ export default class Main extends React.Component {
     $("#backbutton").click(function() { window.location.reload(); })
 
     var currentPage = window.location.href.split("/")[3]
-    if (currentPage !== "" && currentPage !== "access") {
+    if (currentPage !== "" && currentPage !== "admin") {
       $.get(config["api"] + "/api/v1/content/" + window.location.href.split("/")[3], function(data) {
         $(".jumbotron").html(decodeHtmlEntity(data));
       });
@@ -262,6 +282,29 @@ export default class Main extends React.Component {
         $(".jumbotron").html(decodeHtmlEntity(data));
       });
     }
+
+    $("#delpage-button").click(function() {
+      $.getJSON(config["api"] + "/api/v1/get/role/" + localStorage.getItem("username") + "/" + localStorage.getItem("sessionid"), function(d2) {
+        role = d2["role"];
+        $("." + role).hide();
+        $(".deletepage-panel").show();
+      });
+    });
+
+    $("#delpage").click(function() {
+      $.post(config["api"] + "/api/v1/delete/page/" + localStorage.getItem("username") + "/" + localStorage.getItem("sessionid") + "/" + $("#select-delpage").val(), function(data) {
+        if (data["deleted"] === "true") {
+          localStorage.setItem("success", "true");
+          window.location.reload()
+        } else {
+          localStorage.setItem("error", "true");
+          window.location.reload();
+        }
+      }).fail(function() {
+        localStorage.setItem("error", "true");
+        window.location.reload();
+      });
+    });
   }
 
   render() {
@@ -291,7 +334,8 @@ export default class Main extends React.Component {
             <h1>Welcome <span className="username"></span>!</h1>
             <p>You are <span className="role"></span>.</p>
             <div className="god author admin">
-            <p><Button id="pages-button">Pages</Button></p>
+            <p><Button id="pages-button">Edit/New Page</Button></p>
+            <p><Button id="delpage-button">Delete page</Button></p>
             <p><Button id="adduser-button">Add user</Button></p>
             <p><Button id="deluser-button">Delete User</Button></p>
             </div>
@@ -336,22 +380,31 @@ export default class Main extends React.Component {
             <Button id="adduser" color="primary">Add user</Button>
           </div>
           <div className="pages-panel">
-            <h1>Edit page</h1>
+            <h1>Edit/New page</h1>
             <FormGroup row>
-              <Label for="select-page">Choose Page</Label>
-              <Input type="select" name="select-page" id="select-page">
-                
+              <Label for="select-page">Choose page</Label>
+              <Input type="select" name="select-page" className="pageselector" id="select-page">
               </Input>
             </FormGroup>
             <FormGroup row>
               <Label for="title-page">Title</Label>
               <Input name="title-page" id="title-page"></Input>
+              <p>Permalink: <span id="permalink"></span></p>
             </FormGroup>
             <FormGroup>
               <br />
-              <ReactQuill value={this.state.text} />
+              <ReactQuill />
             </FormGroup>
             <Button color="primary" id="submit-page">Update page</Button>
+          </div>
+          <div className="deletepage-panel">
+            <h1>Delete page</h1>
+            <FormGroup row>
+              <Label for="select-delpage">Choose Page</Label>
+              <Input type="select" name="select-delpage" className="pageselector" id="select-delpage">
+              </Input>
+            </FormGroup>
+            <Button color="danger" id="delpage">Delete page</Button>
           </div>
           <div><br /><Button id="backbutton">Back</Button></div>
         </Jumbotron>

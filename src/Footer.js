@@ -16,6 +16,9 @@ export default class Footer extends React.Component {
         $.get(config["api"] + "/api/v1/content/imprint", function(data) {
             $(".link-imprint").html(data.split("\n")[0].replace("<h1>", "").replace("</h1>", ""));
         });
+        $.get(config["api"] + "/api/v1/content/terms", function(data) {
+            $(".link-terms").html(data.split("\n")[0].replace("<h1>", "").replace("</h1>", ""));
+        });
 
         $.getJSON(config["api"] + "/api/v1/config", function(data) {
             $(".app-name").html(data["appname"]);
@@ -28,7 +31,7 @@ export default class Footer extends React.Component {
             //Render Footer
             <div>
                 <footer className="footer">
-                    <span className="text-muted">&copy; <span className="year"></span> <span className="app-name"></span> | <a href="/privacy" className="link-privacy" rel="noopener noreferrer"></a> | <a href="/imprint" className="link-imprint" rel="noopener noreferrer"></a></span>
+                    <span className="text-muted">&copy; <span className="year"></span> <span className="app-name"></span> | <a href="/privacy" className="link-privacy" rel="noopener noreferrer">Privacy</a> | <a href="/imprint" className="link-imprint" rel="noopener noreferrer">Imprint</a> | <a href="/terms" className="link-terms" rel="noopener noreferrer">Terms of Service</a></span>
                 </footer>
             </div>
         );

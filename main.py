@@ -10,6 +10,7 @@ import os
 import redis
 import hashlib
 import os
+import subprocess
 
 f = open("src/params.json", "r")
 data = json.load(f)
@@ -41,6 +42,11 @@ def img(filepath):
 @get("/static/js/<filepath>")
 def js(filepath):
     return static_file(filepath, root="build/static/js")
+
+@get("/api/v1/content/")
+def emptycontent():
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    return ""
 
 @get("/api/v1/content/<path>")
 def content(path):
@@ -77,15 +83,27 @@ def verify(username, sid):
 def changepage(username, sid, page, title):
         response.headers['Access-Control-Allow-Origin'] = '*'
         content = request.forms.get("content")
-        if r.get("imperiumcms/sessions/" + username + "/" + sid + "/login") == b"true" and r.get("imperiumcms/users/" + username) == bytes(username.encode()):
+        if r.get("imperiumcms/users/" + username + "/role/") == b"god" or r.get("imperiumcms/users/" + username + "/role/") == b"admin" or r.get("imperiumcms/users/" + username + "/role/") == b"author" and r.get("imperiumcms/sessions/" + username + "/" + sid + "/login") == b"true":
                 response.content_type = "application/json"
-                f = open("content/" + page + ".html", "w")
+                f = open("content/" + page + ".html", "w+")
                 f.write("<h1>" + title + "</h1>\n" + content)
                 f.close()
                 return json.dumps({"changed": "true"})
         else:
                 response.content_type = "application/json"
                 return json.dumps({"error": "nochange"})
+
+@post("/api/v1/delete/page/<username>/<sid>/<page>")
+def deletepage(username, sid, page):
+        response.headers['Access-Control-Allow-Origin'] = '*'
+        content = request.forms.get("content")
+        if r.get("imperiumcms/users/" + username + "/role/") == b"god" or r.get("imperiumcms/users/" + username + "/role/") == b"admin" or r.get("imperiumcms/users/" + username + "/role/") == b"author" and r.get("imperiumcms/sessions/" + username + "/" + sid + "/login") == b"true":
+                response.content_type = "application/json"
+                subprocess.Popen(["rm", "-f", "content/" + page.replace(".", "").replace("/", "").replace("\\", "") + ".html"], shell=False)
+                return json.dumps({"deleted": "true"})
+        else:
+                response.content_type = "application/json"
+                return json.dumps({"error": "nodelete"})
 
 @get("/api/v1/verify/admin/<username>/<sid>")
 def verifyadmin(username, sid):
@@ -204,10 +222,14 @@ def index():
 @get("/<filename>")
 def findex(filename):
     try:
-        if not filename == "access":
-            filename = ".".join(filename.split(".")[1:])
-            ending = filename.split(".")[:1][0]
-            return static_file(filename + ending, root="build/")
+        if not filename == "admin":
+            ending = filename.split(".")[1:][0]
+            if not ending == "":
+                if ".js" in filename:
+                    response.content_type = "text/javascript"
+                return static_file(filename, root="build/")
+            else:
+                return static_file("index.html", root="build/")
         else:
             return static_file("index.html", root="build/")
     except:

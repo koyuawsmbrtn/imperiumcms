@@ -26,7 +26,7 @@ class App extends Component {
     $(".partner").hide();
 
     //Login form
-    if (window.location.href.indexOf("/access") > -1) {
+    if (window.location.href.indexOf("/admin") > -1) {
       if (localStorage.getItem("sessionid") === null || localStorage.getItem("username") === null) {
         //Show login form if user is logged out
         $(".home").hide();

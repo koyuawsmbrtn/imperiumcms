@@ -4,9 +4,7 @@ import {
   Navbar,
   NavbarToggler,
   NavbarBrand,
-  Nav,
-  NavItem,
-  NavLink,
+  Nav
   } from 'reactstrap';
 import $ from 'jquery';
 import * as config from './params.json';
@@ -68,7 +66,7 @@ export default class Navigation extends React.Component {
         $(".navbar-nav").html("");
         data.forEach(function(i) {
           $.get(config["api"] + "/api/v1/content/" + i, function(data2) {
-            if (i !== "privacy" && i !== "imprint" && i !== "terms" && i !== "home") {
+            if (i !== "privacy" && i !== "imprint" && i !== "terms" && i !== "home" && i !== "") {
               $(".navbar-nav").append("<li class=\"nav-item\"><a href=\"/" + i + "\" class=\"" + i + "-text nav-link\"></a></li>");
               $("." + i + "-text").html(decodeHtmlEntity(data2).split("\n")[0].replace("<h1>", "").replace("</h1>", ""));
             }
@@ -86,8 +84,7 @@ export default class Navigation extends React.Component {
           <NavbarToggler onClick={this.toggle} />
           <Collapse isOpen={this.state.isOpen} navbar>
             <Nav navbar>
-              <ul class="navbar-nav">
-              
+              <ul className="navbar-nav">
               </ul>
             </Nav>
           </Collapse>
