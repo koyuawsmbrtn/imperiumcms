@@ -20,7 +20,6 @@ class App extends Component {
       $(".errorbackend").show();
       $("a").attr("href", ""); //Disable all links to be completely sure
     });
-    $("body").attr("style", "background: #ccc !important;");
 
     $(".admin").hide();
     $(".partner").hide();

@@ -50,6 +50,8 @@ export default class Main extends React.Component {
     $(".pages-panel").hide();
     $("#delpage").hide();
     $(".deletepage-panel").hide();
+    $(".css-panel").hide();
+    $("#css-button").hide();
     $(".login-frontend").click(function() {
       //console.log("login!");
     });
@@ -105,10 +107,12 @@ export default class Main extends React.Component {
             $("#delpage-button").show();
             $("#adduser").show();
             $("#deluser").show();
+            $("#css-button").show();
           }
         });
       }
     });
+
 
     $("#logout").click(function() {
       $.getJSON(config["api"] + "/api/v1/destroy/session/" + localStorage.getItem("username") + "/" + localStorage.getItem("sessionid"), function(data) {
@@ -219,6 +223,17 @@ export default class Main extends React.Component {
       }
     });
 
+    $("#css-button").click(function() {
+      $.getJSON(config["api"] + "/api/v1/get/role/" + localStorage.getItem("username") + "/" + localStorage.getItem("sessionid"), function(d2) {
+        role = d2["role"];
+        $("." + role).hide();
+        $(".css-panel").show();
+      });
+      $.get(config["api"] + "/api/v1/get/css", function(data) {
+        $("#css-textbox").val(data);
+      });
+    });
+
     $("#pages-button").click(function() {
       $.getJSON(config["api"] + "/api/v1/get/role/" + localStorage.getItem("username") + "/" + localStorage.getItem("sessionid"), function(d2) {
         role = d2["role"];
@@ -247,6 +262,15 @@ export default class Main extends React.Component {
 
     $("#submit-page").click(function() {
       $.post(config["api"] + "/api/v1/change/page/" + localStorage.getItem("username") + "/" + localStorage.getItem("sessionid") + "/" + $("#permalink").html() + "/" + $("#title-page").val(), {content: encodeHtmlEntity($(".ql-editor").html())}, function(data) {
+        if (data["changed"] === "true") {
+          localStorage.setItem("success", "true");
+          window.location.reload();
+        }
+      })
+    });
+
+    $("#css").click(function() {
+      $.post(config["api"] + "/api/v1/change/css/" + localStorage.getItem("username") + "/" + localStorage.getItem("sessionid"), {css: $("#css-textbox").val()}, function(data) {
         if (data["changed"] === "true") {
           localStorage.setItem("success", "true");
           window.location.reload();
@@ -327,7 +351,7 @@ export default class Main extends React.Component {
             <Alert color="danger" isOpen={this.state.visible} toggle={this.onDismiss} className="errorlogin">
             User couldn't be authenticated. Is the username and/or password correct?
             </Alert>
-            <h1>Anmelden</h1><br />
+            <h1>Login</h1><br />
             <Login />
           </div>
           <div className="admin partner user author god">
@@ -338,6 +362,7 @@ export default class Main extends React.Component {
             <p><Button id="delpage-button">Delete page</Button></p>
             <p><Button id="adduser-button">Add user</Button></p>
             <p><Button id="deluser-button">Delete User</Button></p>
+            <p><Button id="css-button">Custom CSS</Button></p>
             </div>
             <div className="god">
             <p><Button id="restart">Restart server</Button></p>
@@ -405,6 +430,12 @@ export default class Main extends React.Component {
               </Input>
             </FormGroup>
             <Button color="danger" id="delpage">Delete page</Button>
+          </div>
+          <div className="css-panel">
+            <h1>Custom CSS</h1>
+            <Input type="textarea" name="text" id="css-textbox" />
+            <br />
+            <Button id="css" color="primary">Send</Button>
           </div>
           <div><br /><Button id="backbutton">Back</Button></div>
         </Jumbotron>

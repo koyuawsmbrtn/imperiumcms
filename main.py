@@ -191,6 +191,28 @@ def getpages():
         plist = os.popen("ls content/").read().replace(".html", "").split("\n")
         return json.dumps(plist)
 
+@post("/api/v1/change/css/<username>/<sid>")
+def changecss(username, sid):
+        response.headers['Access-Control-Allow-Origin'] = '*'
+        response.content_type = "application/json"
+        content = request.forms.get("css")
+        if r.get("imperiumcms/users/" + username + "/role/") == b"god" or r.get("imperiumcms/users/" + username + "/role/") == b"admin" and r.get("imperiumcms/sessions/" + username + "/" + sid + "/login") == b"true":
+            f = open("public/custom.css", "w")
+            f.write(content)
+            f.close()
+            return json.dumps({"status": "success"})
+        else:
+            return json.dumps({"error": "nochangecss"})
+
+@get("/api/v1/get/css")
+def getcss():
+        response.headers['Access-Control-Allow-Origin'] = '*'
+        response.content_type = "text/css"
+        f = open("public/custom.css")
+        s = f.read()
+        f.close()
+        return s
+
 # Service Worker
 @get("/service-worker.js")
 def serviceworker():

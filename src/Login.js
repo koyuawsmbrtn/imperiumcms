@@ -43,11 +43,11 @@ export default class Login extends React.Component {
             //Render login form
             <div>
                 <FormGroup row>
-                    <Label for="username">Benutzername</Label>
+                    <Label for="username">Username</Label>
                     <Input type="text" name="username" id="username" />
                 </FormGroup>
                 <FormGroup row>
-                    <Label for="password">Passwort</Label>
+                    <Label for="password">Password</Label>
                     <Input type="password" name="password" id="password" />
                 </FormGroup>
                 <Button color="primary" id="login">Login</Button>

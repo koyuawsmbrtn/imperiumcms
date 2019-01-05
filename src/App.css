@@ -10,6 +10,7 @@ html {
 
 body {
   margin-bottom: 60px;
+  background: #ccc !important;
 }
 
 .footer {
@@ -41,4 +42,10 @@ footer {
 
 h1 {
   padding-bottom: 30px;
+}
+
+#css-textbox {
+  width: 800px;
+  height: 600px;
+  font-family: monospace;
 }
