@@ -19,3 +19,5 @@ rm -f yarn-debug.log*
 rm -f yarn-error.log*
 
 rm -f package-lock.json
+
+git checkout -- content

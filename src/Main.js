@@ -45,6 +45,7 @@ export default class Main extends React.Component {
     $("#stop").hide();
     $("#adduser").hide();
     $("#deluser").hide();
+    $("#pages-button").hide();
     $(".deluser-panel").hide();
     $(".adduser-panel").hide();
     $(".pages-panel").hide();
@@ -76,16 +77,21 @@ export default class Main extends React.Component {
             $("#stop").show();
           } else if (role === "partner") {
             $(".role").html("Partner");
-            $("#adduser").hide();
-            $("#deluser").hide();
+            $("#adduser-button").hide();
+            $("#deluser-button").hide();
+          } else if (role === "author") {
+            $(".role").html("Author");
+            $("#pages-button").show();
+            $("#adduser-button").hide();
+            $("#deluser-button").hide();
           } else {
             $(".role").html("User");
-            $("#adduser").hide();
-            $("#deluser").hide();
+            $("#adduser-button").hide();
+            $("#deluser-button").hide();
           }
           if (role === "god" || role === "admin") {
-            $("#adduser").show();
-            $("#deluser").show();
+            $("#adduser-button").show();
+            $("#deluser-button").show();
           }
         });
       }
@@ -201,8 +207,11 @@ export default class Main extends React.Component {
     });
 
     $("#pages-button").click(function() {
-      $("." + role).hide();
-      $(".pages-panel").show();
+      $.getJSON(config["api"] + "/api/v1/get/role/" + localStorage.getItem("username") + "/" + localStorage.getItem("sessionid"), function(d2) {
+        role = d2["role"];
+        $("." + role).hide();
+        $(".pages-panel").show();
+      });
     });
 
     $("#select-page").change(function() {
@@ -232,7 +241,6 @@ export default class Main extends React.Component {
     $("button").click(function() {
       //Display back button if lost
       var attr = $(".user").attr("display");
-      console.log(attr);
       if (window.location.href.indexOf("/access") > -1) {
         $("#backbutton").show();
       } else {
@@ -279,10 +287,10 @@ export default class Main extends React.Component {
             <h1>Anmelden</h1><br />
             <Login />
           </div>
-          <div className="admin partner user god">
+          <div className="admin partner user author god">
             <h1>Welcome <span className="username"></span>!</h1>
             <p>You are <span className="role"></span>.</p>
-            <div className="god admin">
+            <div className="god author admin">
             <p><Button id="pages-button">Pages</Button></p>
             <p><Button id="adduser-button">Add user</Button></p>
             <p><Button id="deluser-button">Delete User</Button></p>
@@ -319,6 +327,7 @@ export default class Main extends React.Component {
               <Label for="role-adduser">Role</Label>
               <Input type="select" id="role-adduser">
                 <option value="user">User</option>
+                <option value="author">Author</option>
                 <option value="partner">Partner</option>
                 <option value="admin">Administrator</option>
                 <option value="god">God</option>
