@@ -52,24 +52,6 @@ export default class Main extends React.Component {
       //console.log("login!");
     });
 
-    //Page titles
-    /*
-    $.get(config["api"] + "/api/v1/content/s2", function(data) {
-      $(".s2-text").html(decodeHtmlEntity(data).split("\n")[0].replace("<h1>", "").replace("</h1>", ""));
-    });
-    $.get(config["api"] + "/api/v1/content/about", function(data) {
-      $(".about-text").html(decodeHtmlEntity(data).split("\n")[0].replace("<h1>", "").replace("</h1>", ""));
-    });
-    $.get(config["api"] + "/api/v1/content/privacy", function(data) {
-      $(".privacy-text").html(decodeHtmlEntity(data).split("\n")[0].replace("<h1>", "").replace("</h1>", ""));
-    });
-    $.get(config["api"] + "/api/v1/content/imprint", function(data) {
-      $(".imprint-text").html(decodeHtmlEntity(data).split("\n")[0].replace("<h1>", "").replace("</h1>", ""));
-    });
-    $.get(config["api"] + "/api/v1/content/home", function(data) {
-      $(".home-text").html(decodeHtmlEntity(data).split("\n")[0].replace("<h1>", "").replace("</h1>", ""));
-    });*/
-
     $.getJSON(config["api"] + "/api/v1/get/pages", function(data) {
       $("#select-page").html("<option></option>");
       data.forEach(function(i) {
@@ -264,12 +246,12 @@ export default class Main extends React.Component {
     var currentPage = window.location.href.split("/")[3]
     if (currentPage !== "" && currentPage !== "access") {
       $.get(config["api"] + "/api/v1/content/" + window.location.href.split("/")[3], function(data) {
-        $(".jumbotron").html(data);
+        $(".jumbotron").html(decodeHtmlEntity(data));
       });
     }
     if (currentPage === "") {
       $.get(config["api"] + "/api/v1/content/home", function(data) {
-        $(".jumbotron").html(data);
+        $(".jumbotron").html(decodeHtmlEntity(data));
       });
     }
   }
