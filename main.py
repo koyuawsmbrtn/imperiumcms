@@ -197,7 +197,7 @@ def changecss(username, sid):
         response.content_type = "application/json"
         content = request.forms.get("css")
         if r.get("imperiumcms/users/" + username + "/role/") == b"god" or r.get("imperiumcms/users/" + username + "/role/") == b"admin" and r.get("imperiumcms/sessions/" + username + "/" + sid + "/login") == b"true":
-            f = open("public/custom.css", "w")
+            f = open("custom.css", "w")
             f.write(content)
             f.close()
             return json.dumps({"status": "success"})
@@ -208,7 +208,7 @@ def changecss(username, sid):
 def getcss():
         response.headers['Access-Control-Allow-Origin'] = '*'
         response.content_type = "text/css"
-        f = open("public/custom.css")
+        f = open("custom.css")
         s = f.read()
         f.close()
         return s

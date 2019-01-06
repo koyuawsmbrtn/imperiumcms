@@ -271,7 +271,7 @@ export default class Main extends React.Component {
 
     $("#css").click(function() {
       $.post(config["api"] + "/api/v1/change/css/" + localStorage.getItem("username") + "/" + localStorage.getItem("sessionid"), {css: $("#css-textbox").val()}, function(data) {
-        if (data["changed"] === "true") {
+        if (data["status"] === "success") {
           localStorage.setItem("success", "true");
           window.location.reload();
         }
