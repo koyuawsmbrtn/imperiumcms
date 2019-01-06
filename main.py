@@ -35,9 +35,9 @@ def css(filepath):
 def font(filepath):
     return static_file(filepath, root="build/static/font")
 
-@get("/static/img/<filepath:re:.*\.(jpg|png|gif|ico|svg)>")
+@get("/img/<filepath:re:.*\.(jpg|png|gif|ico|svg)>")
 def img(filepath):
-    return static_file(filepath, root="build/static/img")
+    return static_file(filepath, root="img/")
 
 @get("/static/js/<filepath>")
 def js(filepath):
