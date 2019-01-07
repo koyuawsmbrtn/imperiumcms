@@ -11,6 +11,8 @@ class App extends Component {
     //Hide login form
     $(".login").hide();
 
+    localStorage.setItem("api", config["api"]);
+
     //Get app name from API or read config if backend is down
     $.getJSON(config["api"] + "/api/v1/config", function(data) {
       document.title = data["appname"];
@@ -20,6 +22,9 @@ class App extends Component {
       $(".errorbackend").show();
       $("a").attr("href", ""); //Disable all links to be completely sure
     });
+
+    //Load custom css
+    $("head").append("<link rel=\"stylesheet\" href=\"" + config["api"] + "/api/v1/get/css\">");
 
     $(".admin").hide();
     $(".partner").hide();

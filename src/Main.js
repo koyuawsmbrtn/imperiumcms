@@ -52,6 +52,10 @@ export default class Main extends React.Component {
     $(".deletepage-panel").hide();
     $(".css-panel").hide();
     $("#css-button").hide();
+    $(".upload-panel").hide();
+    $("#upload-button").hide();
+    $(".images-panel").hide();
+    $("#images-button").hide();
     $(".login-frontend").click(function() {
       //console.log("login!");
     });
@@ -95,12 +99,11 @@ export default class Main extends React.Component {
             $("#delpage-button").show();
             $("#adduser-button").hide();
             $("#deluser-button").hide();
+            $("#upload-button").show();
+            $("#images-button").show();
           } else {
             $(".role").html("User");
-            $("#adduser").hide();
-            $("#deluser").hide();
-            $("#adduser-button").hide();
-            $("#deluser-button").hide();
+            //Might hide everything now
           }
           if (role === "god" || role === "admin") {
             $("#delpage").show();
@@ -108,11 +111,26 @@ export default class Main extends React.Component {
             $("#adduser").show();
             $("#deluser").show();
             $("#css-button").show();
+            $("#upload-button").show();
+            $("#images-button").show();
           }
         });
       }
     });
 
+    $("#images-button").click(function() {
+      $("." + role).hide();
+      $(".images-panel").show();
+      $.get(config["api"] + "/api/v1/get/images", function(data) {
+        var arr = data.split("\n");
+        $(".image-library").html("");
+        arr.forEach(function (i) {
+          if (i !== "") {
+            $(".image-library").append("<a href=\"javascript:delimg('" + i + "');\"><img src=\"" + config["api"] + "/img/" + i + "\" style=\"cursor:pointer;\" width=\"300\"></a><br>\n");
+          }
+        });
+      });
+    });
 
     $("#logout").click(function() {
       $.getJSON(config["api"] + "/api/v1/destroy/session/" + localStorage.getItem("username") + "/" + localStorage.getItem("sessionid"), function(data) {
@@ -329,6 +347,33 @@ export default class Main extends React.Component {
         window.location.reload();
       });
     });
+
+    $("#upload-button").click(function() {
+      $("." + role).hide();
+      $(".upload-panel").show();
+    });
+
+    $('#upload-submit').on('click', function (event) {
+      var formData = new FormData();
+      formData.append('data', $("#upload-field")[0].files[0]);
+      $.ajax(config["api"] + "/api/v1/upload/" + localStorage.getItem("username") + "/" + localStorage.getItem("sessionid"), {
+          type: 'POST',
+          contentType: false,
+          processData: false,
+          data: formData,
+          error: function() {
+            localStorage.setItem("error", "true");
+            window.location.reload();
+          },
+          success: function(res) {
+            console.log("ok");
+            if (res["status"] === "success") {
+              localStorage.setItem("succes", "true");
+              window.location.reload();
+            }
+        }
+      });
+    });
   }
 
   render() {
@@ -363,6 +408,8 @@ export default class Main extends React.Component {
             <p><Button id="adduser-button">Add user</Button></p>
             <p><Button id="deluser-button">Delete User</Button></p>
             <p><Button id="css-button">Custom CSS</Button></p>
+            <p><Button id="upload-button">Upload image</Button></p>
+            <p><Button id="images-button">Image library</Button></p>
             </div>
             <div className="god">
             <p><Button id="restart">Restart server</Button></p>
@@ -436,6 +483,20 @@ export default class Main extends React.Component {
             <Input type="textarea" name="text" id="css-textbox" />
             <br />
             <Button id="css" color="primary">Send</Button>
+          </div>
+          <div className="upload-panel">
+            <h1>Upload image</h1>
+            <FormGroup row>
+              <Label for="upload-field">Choose image</Label>
+              <Input type="file" accept=".png,.gif,.jpg,.jpeg" name="upload-field" id="upload-field" />
+            </FormGroup>
+            <Button id="upload-submit" color="primary">Upload</Button>
+          </div>
+          <div className="images-panel">
+            <h1>Image library</h1>
+            <p>You can click on an image to delete it. To embed an image in original size into the editor right-click, copy and paste.</p>
+            <div className="image-library">
+            </div>
           </div>
           <div><br /><Button id="backbutton">Back</Button></div>
         </Jumbotron>

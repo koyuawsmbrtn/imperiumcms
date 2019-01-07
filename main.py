@@ -213,6 +213,43 @@ def getcss():
         f.close()
         return s
 
+@post("/api/v1/upload/<username>/<sid>")
+def upimg(username, sid):
+        response.headers['Access-Control-Allow-Origin'] = '*'
+        response.content_type = "application/json"
+        data = request.files.get("data")
+        name, ext = os.path.splitext(data.filename)
+        if r.get("imperiumcms/users/" + username + "/role/") == b"god" or r.get("imperiumcms/users/" + username + "/role/") == b"admin" or r.get("imperiumcms/users/" + username + "/role/") == b"author" and r.get("imperiumcms/sessions/" + username + "/" + sid + "/login") == b"true":
+                if ext not in ('.png','.jpg','.jpeg','.gif'):
+                        return json.dumps({"error": "notallowed"})
+                else:
+                        try:
+                                data.save("img/")
+                        except:
+                                pass
+                        return json.dumps({"status": "success", "file": "/img/" + data.filename})
+        else:
+                return json.dumps({"error": "noupload"})
+
+@get("/api/v1/delete/<username>/<sid>/<file>")
+def delimg(username, sid, file):
+        response.headers['Access-Control-Allow-Origin'] = '*'
+        response.content_type = "application/json"
+        if r.get("imperiumcms/users/" + username + "/role/") == b"god" or r.get("imperiumcms/users/" + username + "/role/") == b"admin" or r.get("imperiumcms/users/" + username + "/role/") == b"author" and r.get("imperiumcms/sessions/" + username + "/" + sid + "/login") == b"true":
+                try:
+                        os.remove("img/" + file)
+                        return json.dumps({"status": "success"})
+                except:
+                        return json.dumps({"error": "nodelimg"})
+
+@get("/api/v1/get/images")
+def getimages():
+        response.headers['Access-Control-Allow-Origin'] = '*'
+        response.content_type = "text/plain"
+        x = os.popen("ls img/").read()
+        return x
+
+
 # Service Worker
 @get("/service-worker.js")
 def serviceworker():

@@ -9,12 +9,25 @@
     <title>app</title>
     <link rel="stylesheet" href="https://cdn.quilljs.com/1.2.6/quill.snow.css">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+    <script>
+      function delimg(image) {
+        $.get(localStorage.getItem("api") + "/api/v1/delete/" + localStorage.getItem("username") + "/" + localStorage.getItem("sessionid") + "/" + image, function(data) {
+          if (data["status"] === "success") {
+            localStorage.setItem("success", "true");
+            window.location.reload();
+          } else {
+            localStorage.setItem("error", "true");
+            window.location.reload();
+          }
+        });
+      }
+    </script>
   </head>
   <body>
     <noscript>
-      Diese Website benötigt zur Ausführung JavaScript.
+      This website requires JavaScript to run.
     </noscript>
     <div id="root"></div>
-    <link rel="stylesheet" href="/api/v1/get/css">
+    <script src="http://code.jquery.com/jquery-3.3.1.min.js"></script>
   </body>
 </html>
