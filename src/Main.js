@@ -34,6 +34,11 @@ export default class Main extends React.Component {
         return String.fromCharCode(dec);
       });
     };
+    // eslint-disable-next-line
+    String.prototype.replaceAll = function(search, replacement) {
+      var target = this;
+      return target.replace(new RegExp(search, 'g'), replacement);
+    };
 
     $("#backbutton").hide();
 
@@ -56,6 +61,31 @@ export default class Main extends React.Component {
     $("#upload-button").hide();
     $(".images-panel").hide();
     $("#images-button").hide();
+
+    function rendereditor() {
+      if (localStorage.getItem("editor-type") === "visual") {
+        $("#page-editor-visual").show();
+        $("#page-editor-html").hide();
+      } else {
+        $("#page-editor-html").val($(".ql-editor").html().replaceAll("<p>\n</p>", "\n<br>\n"));
+        $("#page-editor-visual").hide();
+        $("#page-editor-html").show();
+      }
+    }
+
+    rendereditor();
+
+    $("#page-editor-html").keypress(function() {
+      var extracss = "";
+      if ($("#page-editor-html").attr("style") === "display: none;") {
+        extracss = "display: none;"
+      }
+      $("#page-editor-visual").show();
+      $("#page-editor-html").css(extracss + "height:" + $(".page-editor-visual").height() + "px;");
+      $("#page-editor-visual").hide();
+      $("#page-editor-html").val($("#page-editor-html").val().replaceAll("<p>\n</p>", "\n<br>\n"));
+    });
+
     $(".login-frontend").click(function() {
       //console.log("login!");
     });
@@ -130,6 +160,15 @@ export default class Main extends React.Component {
           }
         });
       });
+    });
+
+    $("#page-toggle-editor").click(function() {
+      if (localStorage.getItem("editor-type") === "visual") {
+        localStorage.setItem("editor-type", "html");
+      } else {
+        localStorage.setItem("editor-type", "visual");
+      }
+      rendereditor();
     });
 
     $("#logout").click(function() {
@@ -265,12 +304,19 @@ export default class Main extends React.Component {
         $("#title-page").val(decodeHtmlEntity(data).split("\n")[0].replace("<h1>", "").replace("</h1>", ""));
         $(".ql-editor").html(decodeHtmlEntity(data).split("\n").slice(1).join("\n"));
         $("#permalink").html($("#select-page").val());
+        rendereditor();
+        $("#page-editor-html").val($(".ql-editor").html().replaceAll("\n", "\n<br>\n"));
       }).fail(function() {
         $("#title-page").val("");
         $("#permalink").html($("#select-page").val());
         $(".ql-editor").html("");
+        rendereditor();
       });
     });
+
+    if (localStorage.getItem("editor-type", "html")) {
+      $("#page-editor-html").val("");
+    }
 
     $("#title-page").keyup(function() {
       if ($("#select-page").val() === "") {
@@ -279,6 +325,9 @@ export default class Main extends React.Component {
     });
 
     $("#submit-page").click(function() {
+      if ($("#page-editor-html").val() !== "<p><br></p>" && localStorage.getItem("editor-type") === "html") {
+        $(".ql-editor").html($("#page-editor-html").val().replaceAll("\n<br>", ""));
+      }
       $.post(config["api"] + "/api/v1/change/page/" + localStorage.getItem("username") + "/" + localStorage.getItem("sessionid") + "/" + $("#permalink").html() + "/" + $("#title-page").val(), {content: encodeHtmlEntity($(".ql-editor").html())}, function(data) {
         if (data["changed"] === "true") {
           localStorage.setItem("success", "true");
@@ -463,9 +512,11 @@ export default class Main extends React.Component {
               <Input name="title-page" id="title-page"></Input>
               <p>Permalink: <span id="permalink"></span></p>
             </FormGroup>
+            <Button id="page-toggle-editor">Toggle HTML/Visual Editor</Button>
             <FormGroup>
               <br />
-              <ReactQuill />
+              <Input type="textarea" id="page-editor-html" />
+              <ReactQuill id="page-editor-visual" />
             </FormGroup>
             <Button color="primary" id="submit-page">Update page</Button>
           </div>

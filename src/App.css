@@ -44,8 +44,15 @@ h1 {
   padding-bottom: 30px;
 }
 
-#css-textbox {
-  width: 800px;
-  height: 600px;
+#css-textbox, #page-editor-html {
+  width: 100%;
   font-family: monospace;
+}
+
+#css-textbox {
+  height: 600px;
+}
+
+#page-editor-html {
+  min-height: 85px;
 }

@@ -19,6 +19,7 @@ export default class Login extends React.Component {
                     Might store this information in a cookie later :)*/
                     localStorage.setItem("sessionid", data["sid"]);
                     localStorage.setItem("username", username);
+                    localStorage.setItem("editor-type", "visual");
                     //Reload the page and trigger other events to verify login
                     window.location.reload();
                 } else {
