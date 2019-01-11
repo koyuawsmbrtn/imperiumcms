@@ -41,10 +41,11 @@ def img(filepath):
     farr = filepath.split('.')
     ext = farr[len(farr) - 1]
     if ext == "svg":
+        f = open("img/" + filepath, "r")
         response.content_type = "image/svg+xml"
     else:
+        f = open("img/" + filepath, "br")
         response.content_type = "image/" + ext
-    f = open("img/" + filepath, "br")
     x = f.read()
     f.close()
     return x
