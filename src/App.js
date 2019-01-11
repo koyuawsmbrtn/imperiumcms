@@ -3,6 +3,7 @@ import Navigation from './Navigation';
 import Main from './Main';
 import Footer from './Footer';
 import './App.css';
+import './Sidebar.css';
 import $ from 'jquery';
 import * as config from './params.json';
 
@@ -24,7 +25,11 @@ class App extends Component {
     });
 
     //Load custom css
-    $("head").append("<link rel=\"stylesheet\" href=\"" + config["api"] + "/api/v1/get/css\">");
+    if (window.location.href.indexOf("/admin") > -1) {
+      $("head").append("<link rel=\"stylesheet\" href=\"" + config["api"] + "/api/v1/get/css/admin\">")
+    } else {
+      $("head").append("<link rel=\"stylesheet\" href=\"" + config["api"] + "/api/v1/get/css\">");
+    }
 
     $(".admin").hide();
     $(".partner").hide();

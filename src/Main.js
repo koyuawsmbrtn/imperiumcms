@@ -40,14 +40,13 @@ export default class Main extends React.Component {
       return target.replace(new RegExp(search, 'g'), replacement);
     };
 
+    $(".admin-panel").hide();
     $("#backbutton").hide();
 
     $(".errorbackend").hide();
     $(".errorlogin").hide();
     $(".success").hide();
     $(".error").hide();
-    $("#restart").hide();
-    $("#stop").hide();
     $("#adduser").hide();
     $("#deluser").hide();
     $(".deluser-panel").hide();
@@ -61,6 +60,11 @@ export default class Main extends React.Component {
     $("#upload-button").hide();
     $(".images-panel").hide();
     $("#images-button").hide();
+
+    $(".profile-picture").click(function() {
+      $(".panel").hide();
+      $(".front-panel").show();
+    });
 
     function rendereditor() {
       if (localStorage.getItem("editor-type") === "visual") {
@@ -96,8 +100,7 @@ export default class Main extends React.Component {
       data.forEach(function(i) {
         $.get(config["api"] + "/api/v1/content/" + i, function(data2) {
           if (i !== "") {
-            $(".pageselector").append("<option value=\"" + i + "\" class=\"" + i + "-text\"></option>");
-            $("." + i + "-text").html(decodeHtmlEntity(data2).split("\n")[0].replace("<h1>", "").replace("</h1>", ""));
+            $(".pageselector").append("<option value=\"" + i + "\" className=\"" + i + "-text\">" + decodeHtmlEntity(data2).split("\n")[0].replace("<h1>", "").replace("</h1>", "") + "</option>");
           }
         });
       });
@@ -107,14 +110,24 @@ export default class Main extends React.Component {
     var role = null;
     $.getJSON(config["api"] + "/api/v1/verify/session/" + localStorage.getItem("username") + "/" + localStorage.getItem("sessionid"), function(d1) {
       if (d1["verified"] === "true") {
+        $.get(config["api"] + "/api/v1/get/email/" + localStorage.getItem("username") + "/" + localStorage.getItem("sessionid"), function(data) {
+          $.get("https://www.gravatar.com/avatar/" + md5(data["email"]) + "?d=404&s=128", function() {
+            $(".profile-picture").attr("src", "https://www.gravatar.com/avatar/" + md5(data["email"]) + "?d=404&s=128");
+          });
+        });
+        $.get(config["api"] + "/img/ppic-" + localStorage.getItem("username") + ".jpg", function() {
+          $(".profile-picture").attr("src", config["api"] + "/img/ppic-" + localStorage.getItem("username") + ".jpg")
+        });
+        if (window.location.href.indexOf("/admin") > -1) {
+          $(".jumbotron").hide();
+          $(".admin-panel").show();
+        }
         $.getJSON(config["api"] + "/api/v1/get/role/" + localStorage.getItem("username") + "/" + localStorage.getItem("sessionid"), function(d2) {
           role = d2["role"];
           if (role === "admin") {
             $(".role").html("Administrator")
           } else if (role === "god") {
             $(".role").html("God");
-            $("#restart").show();
-            $("#stop").show();
           } else if (role === "partner") {
             $(".role").html("Partner");
             $("#adduser").hide();
@@ -150,13 +163,14 @@ export default class Main extends React.Component {
 
     $("#images-button").click(function() {
       $("." + role).hide();
+      $(".panel").hide();
       $(".images-panel").show();
       $.get(config["api"] + "/api/v1/get/images", function(data) {
         var arr = data.split("\n");
         $(".image-library").html("");
         arr.forEach(function (i) {
           if (i !== "") {
-            $(".image-library").append("<a href=\"javascript:delimg('" + i + "');\"><img src=\"" + config["api"] + "/img/" + i + "\" style=\"cursor:pointer;\" width=\"300\"></a><br>\n");
+            $(".image-library").append("<a href=\"javascript:delimg('" + i + "');\"><img class=\"" + i.split(".")[0] +"\" src=\"" + config["api"] + "/img/" + i + "\" style=\"cursor:pointer;\" width=\"300\"></a><br>\n");
           }
         });
       });
@@ -181,18 +195,6 @@ export default class Main extends React.Component {
         }
       });
     });
-
-    $("#restart").click(function() {
-      $.getJSON(config["api"] + "/api/v1/server/restart/" + localStorage.getItem("username") + "/" + localStorage.getItem("sessionid"), function(data) {
-        //Server restarts
-      });
-    });
-
-    $("#stop").click(function() {
-        $.getJSON(config["api"] + "/api/v1/server/stop/" + localStorage.getItem("username") + "/" + localStorage.getItem("sessionid"), function(data) {
-          //Server stops
-        });
-    })
 
     //If deluser has been clicked
     $("#deluser").click(function() {
@@ -250,12 +252,14 @@ export default class Main extends React.Component {
 
     //Hide everything and show deluser panel if onclick event on deluser-button has been triggered
     $("#deluser-button").click(function() {
+      $(".panel").hide();
       $("." + role).hide();
       $(".deluser-panel").show();
     });
 
     //Hide everything and show adduser panel if onclick event on adduser-button has been triggered
     $("#adduser-button").click(function() {
+      $(".panel").hide();
       $("." + role).hide();
       $(".adduser-panel").show();
     });
@@ -281,6 +285,7 @@ export default class Main extends React.Component {
     });
 
     $("#css-button").click(function() {
+      $(".panel").hide();
       $.getJSON(config["api"] + "/api/v1/get/role/" + localStorage.getItem("username") + "/" + localStorage.getItem("sessionid"), function(d2) {
         role = d2["role"];
         $("." + role).hide();
@@ -292,6 +297,7 @@ export default class Main extends React.Component {
     });
 
     $("#pages-button").click(function() {
+      $(".panel").hide();
       $.getJSON(config["api"] + "/api/v1/get/role/" + localStorage.getItem("username") + "/" + localStorage.getItem("sessionid"), function(d2) {
         role = d2["role"];
         $("." + role).hide();
@@ -350,7 +356,7 @@ export default class Main extends React.Component {
       $(".home").html(decodeHtmlEntity(data));
     })
 
-    $("button").click(function() {
+    $(".btn").click(function() {
       //Display back button if lost
       if (window.location.href.indexOf("/admin") > -1) {
         $("#backbutton").show();
@@ -360,7 +366,10 @@ export default class Main extends React.Component {
     })
 
     //Handle back button
-    $("#backbutton").click(function() { window.location.reload(); })
+    $("#backbutton").click(function() {
+      $(".panel").hide();
+      $("#backbutton").hide();
+    });
 
     var currentPage = window.location.href.split("/")[3]
     if (currentPage !== "" && currentPage !== "admin") {
@@ -375,6 +384,7 @@ export default class Main extends React.Component {
     }
 
     $("#delpage-button").click(function() {
+      $(".panel").hide();
       $.getJSON(config["api"] + "/api/v1/get/role/" + localStorage.getItem("username") + "/" + localStorage.getItem("sessionid"), function(d2) {
         role = d2["role"];
         $("." + role).hide();
@@ -398,6 +408,7 @@ export default class Main extends React.Component {
     });
 
     $("#upload-button").click(function() {
+      $(".panel").hide();
       $("." + role).hide();
       $(".upload-panel").show();
     });
@@ -417,11 +428,14 @@ export default class Main extends React.Component {
           success: function(res) {
             console.log("ok");
             if (res["status"] === "success") {
-              localStorage.setItem("succes", "true");
-              window.location.reload();
+              $("#upload-field").val("");
             }
         }
       });
+    });
+
+    $.get(config["api"] + "/api/v1/content/dashboard", function(data) {
+      $(".front-panel").html(decodeHtmlEntity(data));
     });
   }
 
@@ -432,124 +446,133 @@ export default class Main extends React.Component {
         <Alert color="danger" className="errorbackend">
           Error while trying to connect to backend. Is the backend server running?
         </Alert>
+        {/*
+        User Profile Sidebar by @keenthemes
+        A component of Metronic Theme - #1 Selling Bootstrap 3 Admin Theme in Themeforest: http://j.mp/metronictheme
+        Licensed under MIT
+        */}
+        <div className="admin-panel">
+            <div className="row profile">
+            <div className="col-md-3">
+              <div className="profile-sidebar">
+                <div className="profile-userpic">
+                  <img src={config["api"] + "/blank-user"} className="profile-picture" alt="" style={{cursor: "pointer"}} />
+                </div>
+                <div className="profile-usertitle">
+                  <div className="profile-usertitle-name">
+                    <span className="username"></span>
+                  </div>
+                  <div className="profile-usertitle-job">
+                    <span className="role"></span>
+                  </div>
+                </div>
+                <div className="profile-usermenu text-center">
+                  <p><Button id="pages-button">Edit/New Page</Button></p>
+                  <p><Button id="delpage-button">Delete page</Button></p>
+                  <p><Button id="adduser-button">Add user</Button></p>
+                  <p><Button id="deluser-button">Delete User</Button></p>
+                  <p><Button id="css-button">Custom CSS</Button></p>
+                  <p><Button id="upload-button">Upload image</Button></p>
+                  <p><Button id="images-button">Image library</Button></p>
+                  <p><Button id="logout" color="primary">Logout</Button></p>
+                </div>
+              </div>
+            </div>
+            <div className="col-md-9">
+                    <div className="profile-content">
+                      <div className="front-panel panel">
+                        
+                      </div>
+                      <div className="deluser-panel panel">
+                        <h1>Delete user</h1>
+                        <FormGroup row>
+                          <Label for="username-deluser">User to delete</Label>
+                          <Input type="text" name="username" id="username-deluser" />
+                        </FormGroup>
+                        <Button color="danger" id="deluser">Delete user</Button>
+                      </div>
+                      <div className="adduser-panel panel">
+                        <h1>Add user</h1>
+                        <FormGroup row>
+                          <Label for="username-adduser">Username</Label>
+                          <Input type="text" name="username" id="username-adduser" />
+                        </FormGroup>
+                        <FormGroup row>
+                          <Label for="password-adduser">Password</Label>
+                          <Input type="password" name="password" id="password-adduser" />
+                        </FormGroup>
+                        <FormGroup row>
+                          <Label for="email-adduser">E-mail</Label>
+                          <Input type="email" name="email" id="email-adduser" />
+                        </FormGroup>
+                        <FormGroup row>
+                          <Label for="role-adduser">Role</Label>
+                          <Input type="select" id="role-adduser">
+                            <option value="user">User</option>
+                            <option value="author">Author</option>
+                            <option value="partner">Partner</option>
+                            <option value="admin">Administrator</option>
+                            <option value="god">God</option>
+                          </Input>
+                        </FormGroup>
+                        <Button id="adduser" color="primary">Add user</Button>
+                      </div>
+                      <div className="pages-panel panel">
+                        <h1>Edit/New page</h1>
+                        <FormGroup row>
+                          <Label for="select-page">Choose page</Label>
+                          <Input type="select" name="select-page" className="pageselector" id="select-page">
+                          </Input>
+                        </FormGroup>
+                        <FormGroup row>
+                          <Label for="title-page">Title</Label>
+                          <Input name="title-page" id="title-page"></Input>
+                          <p>Permalink: <span id="permalink"></span></p>
+                        </FormGroup>
+                        <Button id="page-toggle-editor">Toggle HTML/Visual Editor</Button>
+                        <FormGroup>
+                          <br />
+                          <Input type="textarea" id="page-editor-html" />
+                          <ReactQuill id="page-editor-visual" />
+                        </FormGroup>
+                        <Button color="primary" id="submit-page">Update page</Button>
+                      </div>
+                      <div className="deletepage-panel panel">
+                        <h1>Delete page</h1>
+                        <FormGroup row>
+                          <Label for="select-delpage">Choose Page</Label>
+                          <Input type="select" name="select-delpage" className="pageselector" id="select-delpage">
+                          </Input>
+                        </FormGroup>
+                        <Button color="danger" id="delpage">Delete page</Button>
+                      </div>
+                      <div className="css-panel panel">
+                        <h1>Custom CSS</h1>
+                        <Input type="textarea" name="text" id="css-textbox" />
+                        <br />
+                        <Button id="css" color="primary">Send</Button>
+                      </div>
+                      <div className="upload-panel panel">
+                        <h1>Upload image</h1>
+                        <FormGroup row>
+                          <Label for="upload-field">Choose image</Label>
+                          <Input type="file" accept=".png,.gif,.jpg,.jpeg" name="upload-field" id="upload-field" />
+                        </FormGroup>
+                        <Button id="upload-submit" color="primary">Upload</Button>
+                      </div>
+                      <div className="images-panel panel">
+                        <h1>Image library</h1>
+                        <p><b>Note:</b> You can click on an image to delete it. To embed an image in original size into the editor right-click, copy and paste.</p>
+                        <div className="image-library">
+                        </div>
+                      </div>
+                    </div>
+            </div>
+          </div>
+        </div>
         <Jumbotron>
-          <Alert color="success" isOpen={this.state.visible} toggle={this.onDismiss} className="success">
-                Success!
-          </Alert>
-          <Alert color="danger" isOpen={this.state.visible} toggle={this.onDismiss} className="error">
-                Error!
-          </Alert>
-          <div className="home">
-          </div>
-          <div className="login">
-            <Alert color="danger" isOpen={this.state.visible} toggle={this.onDismiss} className="errorlogin">
-            User couldn't be authenticated. Is the username and/or password correct?
-            </Alert>
-            <h1>Login</h1><br />
-            <Login />
-          </div>
-          <div className="admin partner user author god">
-            <h1>Welcome <span className="username"></span>!</h1>
-            <p>You are <span className="role"></span>.</p>
-            <div className="god author admin">
-            <p><Button id="pages-button">Edit/New Page</Button></p>
-            <p><Button id="delpage-button">Delete page</Button></p>
-            <p><Button id="adduser-button">Add user</Button></p>
-            <p><Button id="deluser-button">Delete User</Button></p>
-            <p><Button id="css-button">Custom CSS</Button></p>
-            <p><Button id="upload-button">Upload image</Button></p>
-            <p><Button id="images-button">Image library</Button></p>
-            </div>
-            <div className="god">
-            <p><Button id="restart">Restart server</Button></p>
-            <p><Button id="stop">Stop server</Button></p>
-            </div>
-            <p><Button id="logout" color="primary">Logout</Button></p>
-          </div>
-          <div className="deluser-panel">
-            <h1>Delete user</h1>
-            <FormGroup row>
-              <Label for="username-deluser">User to delete</Label>
-              <Input type="text" name="username" id="username-deluser" />
-            </FormGroup>
-            <Button color="danger" id="deluser">Delete user</Button>
-          </div>
-          <div className="adduser-panel">
-            <h1>Add user</h1>
-            <FormGroup row>
-              <Label for="username-adduser">Username</Label>
-              <Input type="text" name="username" id="username-adduser" />
-            </FormGroup>
-            <FormGroup row>
-              <Label for="password-adduser">Password</Label>
-              <Input type="password" name="password" id="password-adduser" />
-            </FormGroup>
-            <FormGroup row>
-              <Label for="email-adduser">E-mail</Label>
-              <Input type="email" name="email" id="email-adduser" />
-            </FormGroup>
-            <FormGroup row>
-              <Label for="role-adduser">Role</Label>
-              <Input type="select" id="role-adduser">
-                <option value="user">User</option>
-                <option value="author">Author</option>
-                <option value="partner">Partner</option>
-                <option value="admin">Administrator</option>
-                <option value="god">God</option>
-              </Input>
-            </FormGroup>
-            <Button id="adduser" color="primary">Add user</Button>
-          </div>
-          <div className="pages-panel">
-            <h1>Edit/New page</h1>
-            <FormGroup row>
-              <Label for="select-page">Choose page</Label>
-              <Input type="select" name="select-page" className="pageselector" id="select-page">
-              </Input>
-            </FormGroup>
-            <FormGroup row>
-              <Label for="title-page">Title</Label>
-              <Input name="title-page" id="title-page"></Input>
-              <p>Permalink: <span id="permalink"></span></p>
-            </FormGroup>
-            <Button id="page-toggle-editor">Toggle HTML/Visual Editor</Button>
-            <FormGroup>
-              <br />
-              <Input type="textarea" id="page-editor-html" />
-              <ReactQuill id="page-editor-visual" />
-            </FormGroup>
-            <Button color="primary" id="submit-page">Update page</Button>
-          </div>
-          <div className="deletepage-panel">
-            <h1>Delete page</h1>
-            <FormGroup row>
-              <Label for="select-delpage">Choose Page</Label>
-              <Input type="select" name="select-delpage" className="pageselector" id="select-delpage">
-              </Input>
-            </FormGroup>
-            <Button color="danger" id="delpage">Delete page</Button>
-          </div>
-          <div className="css-panel">
-            <h1>Custom CSS</h1>
-            <Input type="textarea" name="text" id="css-textbox" />
-            <br />
-            <Button id="css" color="primary">Send</Button>
-          </div>
-          <div className="upload-panel">
-            <h1>Upload image</h1>
-            <FormGroup row>
-              <Label for="upload-field">Choose image</Label>
-              <Input type="file" accept=".png,.gif,.jpg,.jpeg" name="upload-field" id="upload-field" />
-            </FormGroup>
-            <Button id="upload-submit" color="primary">Upload</Button>
-          </div>
-          <div className="images-panel">
-            <h1>Image library</h1>
-            <p>You can click on an image to delete it. To embed an image in original size into the editor right-click, copy and paste.</p>
-            <div className="image-library">
-            </div>
-          </div>
-          <div><br /><Button id="backbutton">Back</Button></div>
+          <h1>Login</h1>
+          <Login />
         </Jumbotron>
       </div>
     );

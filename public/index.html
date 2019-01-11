@@ -13,8 +13,7 @@
       function delimg(image) {
         $.get(localStorage.getItem("api") + "/api/v1/delete/" + localStorage.getItem("username") + "/" + localStorage.getItem("sessionid") + "/" + image, function(data) {
           if (data["status"] === "success") {
-            localStorage.setItem("success", "true");
-            window.location.reload();
+            $("." + image.split(".")[0]).hide();
           } else {
             localStorage.setItem("error", "true");
             window.location.reload();

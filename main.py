@@ -37,7 +37,12 @@ def font(filepath):
 
 @get("/img/<filepath:re:.*\.(jpg|png|gif|ico|svg)>")
 def img(filepath):
-    return static_file(filepath, root="img/")
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    response.content_type = "image/" + filepath.split(".")[1]
+    f = open("img/" + filepath, "br")
+    x = f.read()
+    f.close()
+    return x
 
 @get("/static/js/<filepath>")
 def js(filepath):
@@ -124,26 +129,6 @@ def destroysession(username, sid):
         except:
                 return json.dumps({"error": "nodestroy"})
 
-@get("/api/v1/server/restart/<username>/<sid>")
-def restart(username, sid):
-        response.headers['Access-Control-Allow-Origin'] = '*'
-        if r.get("imperiumcms/users/" + username + "/role/") == b"god" and r.get("imperiumcms/sessions/" + username + "/" + sid + "/login") == b"true":
-                python = sys.executable
-                os.execl(python, python, * sys.argv)
-        else:
-                response.content_type = "application/json"
-                return json.dumps({"error": "norestart"})
-
-@get("/api/v1/server/stop/<username>/<sid>")
-def stop(username, sid):
-        response.headers['Access-Control-Allow-Origin'] = '*'
-        if r.get("imperiumcms/users/" + username + "/role/") == b"god" and r.get("imperiumcms/sessions/" + username + "/" + sid + "/login") == b"true":
-                os.system("killall redis-server")
-                os.system("kill -9 " + str(os.getpid()))
-        else:
-                response.content_type = "application/json"
-                return json.dumps({"error": "nostop"})
-
 @get("/api/v1/get/role/<username>/<sid>")
 def getrole(username, sid):
         response.headers['Access-Control-Allow-Origin'] = '*'
@@ -153,7 +138,18 @@ def getrole(username, sid):
                 return json.dumps({"role": removebytes(str(role))})
         else:
                 response.content_type = "application/json"
-                return json.dumps({"error": "norestart"})
+                return json.dumps({"error": "norole"})
+
+@get("/api/v1/get/email/<username>/<sid>")
+def getemail(username, sid):
+        response.headers['Access-Control-Allow-Origin'] = '*'
+        if r.get("imperiumcms/sessions/" + username + "/" + sid + "/login") == b"true":
+                email = r.get("imperiumcms/users/" + username + "/email/")
+                response.content_type = "application/json"
+                return json.dumps({"email": removebytes(str(email))})
+        else:
+                response.content_type = "application/json"
+                return json.dumps({"error": "noemail"})
 
 @get("/api/v1/user/add/<username>/<sid>/<role>/<newuser>/<password>/<email>")
 def adduser(username, sid, role, newuser, password, email):
@@ -209,6 +205,15 @@ def getcss():
         response.headers['Access-Control-Allow-Origin'] = '*'
         response.content_type = "text/css"
         f = open("custom.css")
+        s = f.read()
+        f.close()
+        return s
+
+@get("/api/v1/get/css/admin")
+def getadmincss():
+        response.headers['Access-Control-Allow-Origin'] = '*'
+        response.content_type = "text/css"
+        f = open("src/Admin.css")
         s = f.read()
         f.close()
         return s
@@ -277,6 +282,10 @@ def hello():
 @get("/")
 def index():
     return static_file("index.html", root="build/")
+
+@get("/blank-user")
+def blankuser():
+    return static_file("blank.png", root=".")
 
 @get("/<filename>")
 def findex(filename):
