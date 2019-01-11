@@ -27,10 +27,6 @@ h1, .panel .btn, .panel p, .quill, #css-textbox {
     padding-top: 60px;
 }
 
-.btn-primary {
-    margin-left: -15px;
-}
-
 @media(min-width:800px) {
     .jumbotron {
         width: 50%;
