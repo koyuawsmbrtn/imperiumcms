@@ -287,6 +287,10 @@ def index():
 def blankuser():
     return static_file("blank.png", root=".")
 
+@get("/logo")
+def logo():
+    return static_file("logo.svg", root=".")
+
 @get("/<filename>")
 def findex(filename):
     try:

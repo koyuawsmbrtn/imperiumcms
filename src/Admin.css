@@ -26,3 +26,30 @@ h1, .panel .btn, .panel p, .quill, #css-textbox {
 .admin-panel {
     padding-top: 60px;
 }
+
+.btn-primary {
+    margin-left: -15px;
+}
+
+@media(min-width:800px) {
+    .jumbotron {
+        width: 50%;
+        margin: 0 auto;
+        margin-top: 60px;
+    }
+}
+
+@media(max-width:800px) {
+    body {
+        background: #fff !important;
+    }
+}
+
+.logo {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 30px;
+    margin-top: -30px;
+    width: 70%;
+}

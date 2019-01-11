@@ -571,7 +571,6 @@ export default class Main extends React.Component {
           </div>
         </div>
         <Jumbotron>
-          <h1>Login</h1>
           <Login />
         </Jumbotron>
       </div>
