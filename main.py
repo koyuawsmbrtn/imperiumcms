@@ -38,7 +38,12 @@ def font(filepath):
 @get("/img/<filepath:re:.*\.(jpg|png|gif|ico|svg)>")
 def img(filepath):
     response.headers['Access-Control-Allow-Origin'] = '*'
-    response.content_type = "image/" + filepath.split(".")[1]
+    farr = filepath.split('.')
+    ext = farr[len(farr) - 1]
+    if ext == "svg":
+        response.content_type = "image/svg+xml"
+    else:
+        response.content_type = "image/" + ext
     f = open("img/" + filepath, "br")
     x = f.read()
     f.close()
@@ -225,7 +230,7 @@ def upimg(username, sid):
         data = request.files.get("data")
         name, ext = os.path.splitext(data.filename)
         if r.get("imperiumcms/users/" + username + "/role/") == b"god" or r.get("imperiumcms/users/" + username + "/role/") == b"admin" or r.get("imperiumcms/users/" + username + "/role/") == b"author" and r.get("imperiumcms/sessions/" + username + "/" + sid + "/login") == b"true":
-                if ext not in ('.png','.jpg','.jpeg','.gif'):
+                if ext not in ('.png','.jpg','.jpeg','.gif', '.svg', '.ico'):
                         return json.dumps({"error": "notallowed"})
                 else:
                         try:

@@ -556,7 +556,7 @@ export default class Main extends React.Component {
                         <h1>Upload image</h1>
                         <FormGroup row>
                           <Label for="upload-field">Choose image</Label>
-                          <Input type="file" accept=".png,.gif,.jpg,.jpeg" name="upload-field" id="upload-field" />
+                          <Input type="file" accept=".png,.gif,.jpg,.jpeg,.ico,.svg" name="upload-field" id="upload-field" />
                         </FormGroup>
                         <Button id="upload-submit" color="primary">Upload</Button>
                       </div>
