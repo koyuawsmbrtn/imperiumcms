@@ -68,6 +68,7 @@ export default class Main extends React.Component {
 
     function rendereditor() {
       if (localStorage.getItem("editor-type") === "visual") {
+        $(".ql-editor").html($("#page-editor-html").val());
         $("#page-editor-visual").show();
         $("#page-editor-html").hide();
       } else {
@@ -99,7 +100,7 @@ export default class Main extends React.Component {
       $(".pageselector").html("<option></option>");
       data.forEach(function(i) {
         $.get(config["api"] + "/api/v1/content/" + i, function(data2) {
-          if (i !== "") {
+          if (decodeHtmlEntity(data2).split("\n")[0].replace("<h1>", "").replace("</h1>", "") !== "") {
             $(".pageselector").append("<option value=\"" + i + "\" className=\"" + i + "-text\">" + decodeHtmlEntity(data2).split("\n")[0].replace("<h1>", "").replace("</h1>", "") + "</option>");
           }
         });
@@ -372,12 +373,12 @@ export default class Main extends React.Component {
     });
 
     var currentPage = window.location.href.split("/")[3]
-    if (currentPage !== "" && currentPage !== "admin") {
+    if (currentPage !== "" && currentPage !== "admin" && currentPage !== "dashboard") {
       $.get(config["api"] + "/api/v1/content/" + window.location.href.split("/")[3], function(data) {
         $(".jumbotron").html(decodeHtmlEntity(data));
       });
     }
-    if (currentPage === "") {
+    if (currentPage === "" || currentPage === "dashboard") {
       $.get(config["api"] + "/api/v1/content/home", function(data) {
         $(".jumbotron").html(decodeHtmlEntity(data));
       });
@@ -434,7 +435,7 @@ export default class Main extends React.Component {
       });
     });
 
-    $.get(config["api"] + "/api/v1/content/dashboard", function(data) {
+    $.get(config["api"] + "/api/v1/get/dashboard/" + localStorage.getItem("username") + "/" + localStorage.getItem("sessionid"), function(data) {
       $(".front-panel").html(decodeHtmlEntity(data));
     });
   }

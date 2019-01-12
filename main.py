@@ -62,10 +62,24 @@ def emptycontent():
 @get("/api/v1/content/<path>")
 def content(path):
     response.headers['Access-Control-Allow-Origin'] = '*'
-    f = open("content/" + path + ".html")
-    s = f.read().replace("{{appname}}", data["appname"])
-    f.close()
-    return s
+    if not path == "dashboard":
+        f = open("content/" + path + ".html")
+        s = f.read().replace("{{appname}}", data["appname"])
+        f.close()
+        return s
+    else:
+        return ""
+
+@get("/api/v1/get/dashboard/<username>/<sid>")
+def dashboard(username, sid):
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    if r.get("imperiumcms/sessions/" + username + "/" + sid + "/login") == b"true" and r.get("imperiumcms/users/" + username) == bytes(username.encode()):
+        f = open("content/dashboard.html")
+        s = f.read().replace("{{appname}}", data["appname"])
+        f.close()
+        return s
+    else:
+        return ""
 
 @get("/api/v1/login/<username>/<password>")
 def login(username, password):

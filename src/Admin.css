@@ -49,3 +49,11 @@ h1, .panel .btn, .panel p, .quill, #css-textbox {
     margin-top: -30px;
     width: 70%;
 }
+
+.form-group textarea {
+    margin-left: -15px;
+    width: 102% !important;
+    border-radius: 0;
+    min-height: 100.781px !important;
+    border: 1px solid #ccc !important;
+}
