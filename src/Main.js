@@ -66,16 +66,27 @@ export default class Main extends React.Component {
       $(".front-panel").show();
     });
 
+    function toggleeditor() {
+      if (localStorage.getItem("editor-type") === "visual") {
+        $("#page-editor-html").val($(".ql-editor").html().replaceAll("<p><br></p>", "").replaceAll("</p><p>", "</p>\n<p>"));
+        localStorage.setItem("editor-type", "html");
+      } else {
+        $(".ql-editor").html($("#page-editor-html").val().replaceAll("\n<p><br></p>\n", ""));
+        $(".ql-editor").html($("#page-editor-html").val().replaceAll("\n", ""));
+        localStorage.setItem("editor-type", "visual");
+      }
+    }
+
     function rendereditor() {
       if (localStorage.getItem("editor-type") === "visual") {
-        $(".ql-editor").html($("#page-editor-html").val());
         $("#page-editor-visual").show();
         $("#page-editor-html").hide();
       } else {
-        $("#page-editor-html").val($(".ql-editor").html().replaceAll("<p>\n</p>", "\n<br>\n"));
         $("#page-editor-visual").hide();
         $("#page-editor-html").show();
       }
+      toggleeditor();
+      toggleeditor();
     }
 
     rendereditor();
@@ -178,11 +189,7 @@ export default class Main extends React.Component {
     });
 
     $("#page-toggle-editor").click(function() {
-      if (localStorage.getItem("editor-type") === "visual") {
-        localStorage.setItem("editor-type", "html");
-      } else {
-        localStorage.setItem("editor-type", "visual");
-      }
+      toggleeditor();
       rendereditor();
     });
 
@@ -311,8 +318,8 @@ export default class Main extends React.Component {
         $("#title-page").val(decodeHtmlEntity(data).split("\n")[0].replace("<h1>", "").replace("</h1>", ""));
         $(".ql-editor").html(decodeHtmlEntity(data).split("\n").slice(1).join("\n"));
         $("#permalink").html($("#select-page").val());
+        $("#page-editor-html").val($(".ql-editor").html().replaceAll("<p><br></p>", ""));
         rendereditor();
-        $("#page-editor-html").val($(".ql-editor").html().replaceAll("\n", "\n<br>\n"));
       }).fail(function() {
         $("#title-page").val("");
         $("#permalink").html($("#select-page").val());
