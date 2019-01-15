@@ -33,7 +33,27 @@ def css(filepath):
 
 @get("/static/font/<filepath:re:.*\.(eot|otf|svg|ttf|woff|woff2?)>")
 def font(filepath):
-    return static_file(filepath, root="build/static/font")
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    farr = filepath.split('.')
+    ext = farr[len(farr) - 1]
+    if ext == "svg":
+        f = open("public/static/font/" + filepath, "r")
+        response.content_type = "image/svg+xml"
+    if ext == "woff" or ext == "woff2":
+        f = open("public/static/font/" + filepath, "br")
+        response.content_type = "application/font-" + ext
+    if ext == "ttf":
+        f = open("public/static/font/" + filepath, "br")
+        response.content_type = "application/x-font-ttf"
+    if ext == "eot":
+        f = open("public/static/font/" + filepath, "br")
+        response.content_type = "application/vnd.ms-fontobject"
+    if ext == "otf":
+        f = open("public/static/font/" + filepath, "br")
+        response.content_type = "application/x-font-opentype"
+    x = f.read()
+    f.close()
+    return x
 
 @get("/img/<filepath:re:.*\.(jpg|png|gif|ico|svg)>")
 def img(filepath):
