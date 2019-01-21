@@ -174,7 +174,6 @@ export default class Main extends React.Component {
     });
 
     $("#images-button").click(function() {
-      $("." + role).hide();
       $(".panel").hide();
       $(".images-panel").show();
       $.get(config["api"] + "/api/v1/get/images", function(data) {
@@ -261,14 +260,12 @@ export default class Main extends React.Component {
     //Hide everything and show deluser panel if onclick event on deluser-button has been triggered
     $("#deluser-button").click(function() {
       $(".panel").hide();
-      $("." + role).hide();
       $(".deluser-panel").show();
     });
 
     //Hide everything and show adduser panel if onclick event on adduser-button has been triggered
     $("#adduser-button").click(function() {
       $(".panel").hide();
-      $("." + role).hide();
       $(".adduser-panel").show();
     });
 
@@ -296,7 +293,6 @@ export default class Main extends React.Component {
       $(".panel").hide();
       $.getJSON(config["api"] + "/api/v1/get/role/" + localStorage.getItem("username") + "/" + localStorage.getItem("sessionid"), function(d2) {
         role = d2["role"];
-        $("." + role).hide();
         $(".css-panel").show();
       });
       $.get(config["api"] + "/api/v1/get/css", function(data) {
@@ -308,7 +304,6 @@ export default class Main extends React.Component {
       $(".panel").hide();
       $.getJSON(config["api"] + "/api/v1/get/role/" + localStorage.getItem("username") + "/" + localStorage.getItem("sessionid"), function(d2) {
         role = d2["role"];
-        $("." + role).hide();
         $(".pages-panel").show();
       });
     });
@@ -395,7 +390,6 @@ export default class Main extends React.Component {
       $(".panel").hide();
       $.getJSON(config["api"] + "/api/v1/get/role/" + localStorage.getItem("username") + "/" + localStorage.getItem("sessionid"), function(d2) {
         role = d2["role"];
-        $("." + role).hide();
         $(".deletepage-panel").show();
       });
     });
@@ -417,7 +411,6 @@ export default class Main extends React.Component {
 
     $("#upload-button").click(function() {
       $(".panel").hide();
-      $("." + role).hide();
       $(".upload-panel").show();
     });
 
@@ -475,13 +468,17 @@ export default class Main extends React.Component {
                   </div>
                 </div>
                 <div className="profile-usermenu text-center">
-                  <p><Button id="pages-button">Edit/New Page</Button></p>
-                  <p><Button id="delpage-button">Delete page</Button></p>
-                  <p><Button id="adduser-button">Add user</Button></p>
-                  <p><Button id="deluser-button">Delete User</Button></p>
-                  <p><Button id="css-button">Custom CSS</Button></p>
-                  <p><Button id="upload-button">Upload image</Button></p>
-                  <p><Button id="images-button">Image library</Button></p>
+                  <div className="author god admin">
+                    <p><Button id="pages-button">Edit/New Page</Button></p>
+                    <p><Button id="delpage-button">Delete page</Button></p>
+                    <p><Button id="upload-button">Upload image</Button></p>
+                    <p><Button id="images-button">Image library</Button></p>
+                  </div>
+                  <div className="admin god">
+                    <p><Button id="adduser-button">Add user</Button></p>
+                    <p><Button id="deluser-button">Delete User</Button></p>
+                    <p><Button id="css-button">Custom CSS</Button></p>
+                  </div>
                   <p><Button id="logout" color="primary">Logout</Button></p>
                 </div>
               </div>
