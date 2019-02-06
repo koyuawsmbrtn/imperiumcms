@@ -37,12 +37,12 @@ def font(filepath):
     ext = os.path.splitext(filepath)[1]
     path_prefix, file_mode, response.content_type = {
         # "extension": ("path_prefix", "file_mode", "mime_type"),
-        "svg": ("public/static/font/", "r", "image/svg+xml"),
-        "woff": ("public/static/font/", "br", "application/font-woff"),
-        "woff2": ("public/static/font/", "br", "application/font-woff2"),
-        "ttf": ("public/static/font/", "br", "application/x-font-ttf"),
-        "eot": ("public/static/font/", "br", "application/vnd.ms-fontobject"),
-        "otf": ("public/static/font/", "br", "application/x-font-opentype"),
+        ".svg": ("public/static/font/", "r", "image/svg+xml"),
+        ".woff": ("public/static/font/", "br", "application/font-woff"),
+        ".woff2": ("public/static/font/", "br", "application/font-woff2"),
+        ".ttf": ("public/static/font/", "br", "application/x-font-ttf"),
+        ".eot": ("public/static/font/", "br", "application/vnd.ms-fontobject"),
+        ".otf": ("public/static/font/", "br", "application/x-font-opentype"),
     }[ext]
     with open(path_prefix + filepath, file_mode) as file:
         return file.read()
@@ -52,7 +52,7 @@ def font(filepath):
 def img(filepath):
     response.headers['Access-Control-Allow-Origin'] = '*'
     ext = os.path.splitext(filepath)[1]
-    if ext == "svg":
+    if ext == ".svg":
         file = open("img/" + filepath, "r")
         response.content_type = "image/svg+xml"
     else:
