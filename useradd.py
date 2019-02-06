@@ -1,13 +1,15 @@
 #!/usr/bin/python3
-import redis
+# pylint: disable=missing-docstring,invalid-name
+
 import hashlib
 import json
 from getpass import getpass
 
+import redis
+
 # Reading variables
-f = open("config.json", "r")
-data = json.load(f)
-f.close()
+with open("config.json", "r") as file:
+    data = json.load(file)
 salt = data["salt"]
 
 r = redis.StrictRedis(host='localhost', port=6379, db=0)
@@ -18,7 +20,8 @@ adminpassword = getpass("Password: ")
 role = input("Role: ")
 
 finalpassword = hashlib.md5(adminpassword.encode()).hexdigest()
-finalpassword = str(hashlib.md5(finalpassword.encode() + salt.encode()).hexdigest())
+finalpassword = \
+    str(hashlib.md5(finalpassword.encode() + salt.encode()).hexdigest())
 
 r.set("imperiumcms/users/" + useradmin, useradmin)
 r.set("imperiumcms/users/" + useradmin + "/email/", str(adminemail))
