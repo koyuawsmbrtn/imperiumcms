@@ -1,2 +1,2 @@
 #!/bin/sh
-head -c 500 /dev/urandom | fold -w 3 | head -n 1 | md5sum | awk '{ print $1 }'
+{ head -c 3 /dev/urandom; echo; } | md5sum | cut -d ' ' -f 1
