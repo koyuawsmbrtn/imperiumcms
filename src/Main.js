@@ -21,19 +21,6 @@ export default class Main extends React.Component {
   }
 
   componentDidMount() {
-    var encodeHtmlEntity = function(str) {
-      var buf = [];
-      for (var i=str.length-1;i>=0;i--) {
-        buf.unshift(['&#', str[i].charCodeAt(), ';'].join(''));
-      }
-      return buf.join('');
-    };
-
-    var decodeHtmlEntity = function(str) {
-      return str.replace(/&#(\d+);/g, function(match, dec) {
-        return String.fromCharCode(dec);
-      });
-    };
     // eslint-disable-next-line
     String.prototype.replaceAll = function(search, replacement) {
       var target = this;
@@ -68,11 +55,11 @@ export default class Main extends React.Component {
 
     function toggleeditor() {
       if (localStorage.getItem("editor-type") === "visual") {
-        $("#page-editor-html").val($(".ql-editor").html().replaceAll("<p><br></p>", "").replaceAll("</p><p>", "</p>\n<p>"));
+        $("#page-editor-html").val($(".ql-editor").html());
         localStorage.setItem("editor-type", "html");
       } else {
-        $(".ql-editor").html($("#page-editor-html").val().replaceAll("\n<p><br></p>\n", ""));
-        $(".ql-editor").html($("#page-editor-html").val().replaceAll("\n", ""));
+        $(".ql-editor").html($("#page-editor-html").val());
+        $(".ql-editor").html($("#page-editor-html").val());
         localStorage.setItem("editor-type", "visual");
       }
     }
@@ -102,17 +89,13 @@ export default class Main extends React.Component {
       $("#page-editor-html").val($("#page-editor-html").val().replaceAll("<p>\n</p>", "\n<br>\n"));
     });
 
-    $(".login-frontend").click(function() {
-      //console.log("login!");
-    });
-
     //Page selection
     $.getJSON(config["api"] + "/api/v1/get/pages", function(data) {
       $(".pageselector").html("<option></option>");
       data.forEach(function(i) {
         $.get(config["api"] + "/api/v1/content/" + i, function(data2) {
-          if (decodeHtmlEntity(data2).split("\n")[0].replace("<h1>", "").replace("</h1>", "") !== "") {
-            $(".pageselector").append("<option value=\"" + i + "\" className=\"" + i + "-text\">" + decodeHtmlEntity(data2).split("\n")[0].replace("<h1>", "").replace("</h1>", "") + "</option>");
+          if (data2.split("\n")[0].replace("<h1>", "").replace("</h1>", "") !== "") {
+            $(".pageselector").append("<option value=\"" + i + "\" className=\"" + i + "-text\">" + data2.split("\n")[0].replace("<h1>", "").replace("</h1>", "") + "</option>");
           }
         });
       });
@@ -194,7 +177,6 @@ export default class Main extends React.Component {
 
     $("#logout").click(function() {
       $.getJSON(config["api"] + "/api/v1/destroy/session/" + localStorage.getItem("username") + "/" + localStorage.getItem("sessionid"), function(data) {
-        console.log(data);
         if (data["destroyed"] === "true") {
           localStorage.clear();
           localStorage.setItem("success", true);
@@ -310,8 +292,8 @@ export default class Main extends React.Component {
 
     $("#select-page").change(function() {
       $.get(config["api"] + "/api/v1/content/" + $("#select-page").val(), function(data) {
-        $("#title-page").val(decodeHtmlEntity(data).split("\n")[0].replace("<h1>", "").replace("</h1>", ""));
-        $(".ql-editor").html(decodeHtmlEntity(data).split("\n").slice(1).join("\n"));
+        $("#title-page").val(data.split("\n")[0].replace("<h1>", "").replace("</h1>", ""));
+        $(".ql-editor").html(data.split("\n").slice(1).join("\n"));
         $("#permalink").html($("#select-page").val());
         $("#page-editor-html").val($(".ql-editor").html().replaceAll("<p><br></p>", ""));
         rendereditor();
@@ -337,7 +319,7 @@ export default class Main extends React.Component {
       if ($("#page-editor-html").val() !== "<p><br></p>" && localStorage.getItem("editor-type") === "html") {
         $(".ql-editor").html($("#page-editor-html").val().replaceAll("\n<br>", ""));
       }
-      $.post(config["api"] + "/api/v1/change/page/" + localStorage.getItem("username") + "/" + localStorage.getItem("sessionid") + "/" + $("#permalink").html() + "/" + $("#title-page").val(), {content: encodeHtmlEntity($(".ql-editor").html())}, function(data) {
+      $.post(config["api"] + "/api/v1/change/page/" + localStorage.getItem("username") + "/" + localStorage.getItem("sessionid") + "/" + $("#permalink").html() + "/" + $("#title-page").val(), {content: $(".ql-editor").html()}, function(data) {
         if (data["changed"] === "true") {
           localStorage.setItem("success", "true");
           window.location.reload();
@@ -356,7 +338,7 @@ export default class Main extends React.Component {
 
     //Get home page
     $.get(config["api"] + "/api/v1/content/home", function(data) {
-      $(".home").html(decodeHtmlEntity(data));
+      $(".home").html(data);
     })
 
     $(".btn").click(function() {
@@ -377,12 +359,12 @@ export default class Main extends React.Component {
     var currentPage = window.location.href.split("/")[3]
     if (currentPage !== "" && currentPage !== "admin" && currentPage !== "dashboard") {
       $.get(config["api"] + "/api/v1/content/" + window.location.href.split("/")[3], function(data) {
-        $(".jumbotron").html(decodeHtmlEntity(data));
+        $(".jumbotron").html(data);
       });
     }
     if (currentPage === "" || currentPage === "dashboard") {
       $.get(config["api"] + "/api/v1/content/home", function(data) {
-        $(".jumbotron").html(decodeHtmlEntity(data));
+        $(".jumbotron").html(data);
       });
     }
 
@@ -427,7 +409,6 @@ export default class Main extends React.Component {
             window.location.reload();
           },
           success: function(res) {
-            console.log("ok");
             if (res["status"] === "success") {
               $("#upload-field").val("");
             }
@@ -436,7 +417,7 @@ export default class Main extends React.Component {
     });
 
     $.get(config["api"] + "/api/v1/get/dashboard/" + localStorage.getItem("username") + "/" + localStorage.getItem("sessionid"), function(data) {
-      $(".front-panel").html(decodeHtmlEntity(data));
+      $(".front-panel").html(data);
     });
   }
 
