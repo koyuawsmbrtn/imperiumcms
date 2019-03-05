@@ -57,6 +57,12 @@ class App extends Component {
         });
       }
     }
+
+    if (localStorage.getItem("metadata-warning-display") === "false") {
+      $(".metadata-warning").hide();
+    }
+
+    $("head").append("<style>body{overflow:auto !important;}</style>")
   }
   render() {
     return (

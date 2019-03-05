@@ -419,6 +419,7 @@ export default class Main extends React.Component {
     $.get(config["api"] + "/api/v1/get/dashboard/" + localStorage.getItem("username") + "/" + localStorage.getItem("sessionid"), function(data) {
       $(".front-panel").html(data);
     });
+    $("body").show();
   }
 
   render() {
@@ -544,12 +545,12 @@ export default class Main extends React.Component {
                           <Label for="upload-field">Choose image</Label>
                           <Input type="file" accept=".png,.gif,.jpg,.jpeg,.ico,.svg" name="upload-field" id="upload-field" />
                         </FormGroup>
-                        <p><b>Note:</b> While the image will be uploaded no metadata is being stripped out. Metadata may leak the location where the image has been shot at.</p>
+                        <p className="metadata-warning"><b>Warning:</b> While the image will be uploaded no metadata is being stripped out. Metadata may leak the location where the image has been shot at. <a href="javascript:metadatafine()">I'm fine with this.</a></p>
                         <Button id="upload-submit" color="primary">Upload</Button>
                       </div>
                       <div className="images-panel panel">
                         <h1>Image library</h1>
-                        <p><b>Note:</b> You can click on an image to delete it. To embed an image into the editor right-click, copy and paste.</p>
+                        <p>You can click on an image to delete it. To embed an image into the editor right-click, copy and paste.</p>
                         <div className="image-library">
                         </div>
                       </div>

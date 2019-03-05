@@ -43,7 +43,7 @@ export default class Login extends React.Component {
         return (
             //Render login form
             <div className="login">
-                <img src={config["api"] + "/logo"} class="logo" alt="Logo" />
+                <img src={config["api"] + "/logo"} className="logo" alt="Logo" />
                 <FormGroup row>
                     <Label for="username">Username</Label>
                     <Input type="text" name="username" id="username" />
@@ -52,7 +52,7 @@ export default class Login extends React.Component {
                     <Label for="password">Password</Label>
                     <Input type="password" name="password" id="password" />
                 </FormGroup><br />
-                <div class="text-center">
+                <div className="text-center">
                     <Button color="primary" id="login">Login</Button>
                 </div>
             </div>

@@ -7,6 +7,7 @@
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json">
     <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico">
     <title>app</title>
+    <link rel="stylesheet" href="/static/css/loader.css">
     <link rel="stylesheet" href="https://cdn.quilljs.com/1.2.6/quill.snow.css">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
     <script>
@@ -22,13 +23,41 @@
           });
         }
       }
+      function metadatafine() {
+        $(".metadata-warning").hide();
+        localStorage.setItem("metadata-warning-display", "false");
+      }
     </script>
   </head>
   <body>
     <noscript>
       This website requires JavaScript to run.
+      <div style="display:none";>
     </noscript>
-    <div id="root"></div>
+    <div id="root">
+      <div class='body'>
+          <span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+          </span>
+          <div class='base'>
+            <span></span>
+            <div class='face'></div>
+          </div>
+        </div>
+        <div class='longfazers'>
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+        <h1 class="loadingmsg">Hold tight...</h1>          
+    </div>
+    <noscript>
+      </div>
+    </noscript>
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
   </body>
 </html>
