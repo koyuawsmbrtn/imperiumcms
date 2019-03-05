@@ -6,6 +6,7 @@
 - Added warning about metadata on uploads
 - Added loader (Jetpacks, woooo)
 - Fixed some weird issues with the WYSIWYG editor
+- Updated default theme
 
 # 0.1.0
 This is the initial release of ImperiumCMS. Everything should work now as expected. It may contain some bugs here and there, but I can't think of any right now.
