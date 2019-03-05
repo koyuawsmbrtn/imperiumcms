@@ -544,6 +544,7 @@ export default class Main extends React.Component {
                           <Label for="upload-field">Choose image</Label>
                           <Input type="file" accept=".png,.gif,.jpg,.jpeg,.ico,.svg" name="upload-field" id="upload-field" />
                         </FormGroup>
+                        <p><b>Note:</b> While the image will be uploaded no metadata is being stripped out. Metadata may leak the location where the image has been shot at.</p>
                         <Button id="upload-submit" color="primary">Upload</Button>
                       </div>
                       <div className="images-panel panel">
