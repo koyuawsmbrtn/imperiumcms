@@ -1,10 +1,14 @@
 import React from 'react';
-import { Button, Input, FormGroup, Label } from 'reactstrap';
+import { Button, Input, FormGroup, Label, Alert } from 'reactstrap';
 import $ from 'jquery';
 import md5 from 'md5';
 import * as config from './params.json';
 
 export default class Login extends React.Component {
+    onDismiss() {
+        $(".errorlogin").hide();
+    }
+    
     componentDidMount() {
         //Click event on login button
         $("#login").click(function() {
@@ -42,18 +46,25 @@ export default class Login extends React.Component {
     render() {
         return (
             //Render login form
-            <div className="login">
-                <img src={config["api"] + "/logo"} className="logo" alt="Logo" />
-                <FormGroup row>
-                    <Label for="username">Username</Label>
-                    <Input type="text" name="username" id="username" />
-                </FormGroup>
-                <FormGroup row>
-                    <Label for="password">Password</Label>
-                    <Input type="password" name="password" id="password" />
-                </FormGroup><br />
-                <div className="text-center">
-                    <Button color="primary" id="login">Login</Button>
+            <div>
+                <div className="errorlogin">
+                    <Alert color="danger" toggle={this.onDismiss}>
+                        You can't get logged in. Check your username and/or password and try again.
+                    </Alert>
+                </div>
+                <div className="login">
+                    <img src={config["api"] + "/logo"} className="logo" alt="Logo" />
+                    <FormGroup row>
+                        <Label for="username">Username</Label>
+                        <Input type="text" name="username" id="username" />
+                    </FormGroup>
+                    <FormGroup row>
+                        <Label for="password">Password</Label>
+                        <Input type="password" name="password" id="password" />
+                    </FormGroup><br />
+                    <div className="text-center">
+                        <Button color="primary" id="login">Login</Button>
+                    </div>
                 </div>
             </div>
         )

@@ -559,7 +559,8 @@ export default class Main extends React.Component {
           </div>
         </div>
         <Jumbotron>
-          <Login />
+          <Login /><br /><br />
+          <a href="/">&larr; Back to homepage</a>
         </Jumbotron>
       </div>
     );

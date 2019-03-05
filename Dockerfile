@@ -12,6 +12,5 @@ RUN npm install
 RUN npm run build
 
 EXPOSE 8080
-ENV REDIS=true
 
 CMD ["sh", "run.sh"]

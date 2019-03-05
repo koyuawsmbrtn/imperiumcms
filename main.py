@@ -10,15 +10,23 @@ import subprocess
 import redis
 from bottle import get, post, request, response, route, run, static_file
 
+if 'DOCKER' in os.environ:
+    if os.environ.get('DOCKER') == "true":
+        docker = True
+else:
+    docker = False
 with open("src/params.json", "r") as file:
     data = json.load(file)  # pylint: disable=invalid-name
 with open("config.json", "r") as file:
     config = json.load(file)  # pylint: disable=invalid-name
 salt = config["salt"]  # pylint: disable=invalid-name
 
+if docker == True:
+    dbhost = "db"
+else:
+    dbhost = "localhost"
 # pylint: disable=invalid-name
-r = redis.StrictRedis(host='localhost', port=6379, db=0)
-
+r = redis.StrictRedis(host=dbhost, port=6379, db=0)
 
 def removebytes(s):
     return s.replace("b'", "").replace("'", "")
