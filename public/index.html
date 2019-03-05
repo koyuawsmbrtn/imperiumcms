@@ -11,14 +11,16 @@
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
     <script>
       function delimg(image) {
-        $.get(localStorage.getItem("api") + "/api/v1/delete/" + localStorage.getItem("username") + "/" + localStorage.getItem("sessionid") + "/" + image, function(data) {
-          if (data["status"] === "success") {
-            $("." + image.split(".")[0]).hide();
-          } else {
-            localStorage.setItem("error", "true");
-            window.location.reload();
-          }
-        });
+        if (confirm("Are you sure you want to delete that image? (" + image + ")")) {
+          $.get(localStorage.getItem("api") + "/api/v1/delete/" + localStorage.getItem("username") + "/" + localStorage.getItem("sessionid") + "/" + image, function(data) {
+            if (data["status"] === "success") {
+              $("." + image.split(".")[0]).hide();
+            } else {
+              localStorage.setItem("error", "true");
+              window.location.reload();
+            }
+          });
+        }
       }
     </script>
   </head>

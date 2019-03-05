@@ -548,7 +548,7 @@ export default class Main extends React.Component {
                       </div>
                       <div className="images-panel panel">
                         <h1>Image library</h1>
-                        <p><b>Note:</b> You can click on an image to delete it. To embed an image in original size into the editor right-click, copy and paste.</p>
+                        <p><b>Note:</b> You can click on an image to delete it. To embed an image into the editor right-click, copy and paste.</p>
                         <div className="image-library">
                         </div>
                       </div>
