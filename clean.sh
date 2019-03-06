@@ -21,3 +21,5 @@ rm -f yarn-error.log*
 rm -f package-lock.json
 
 git checkout -- content
+git checkout -- custom.css
+git checkout -- src/params.json

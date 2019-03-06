@@ -1,3 +1,7 @@
+body {
+    background: #fff !important;
+}
+
 .btn {
     width: 150px;
 }
@@ -61,4 +65,25 @@ h1, .panel .btn, .panel p, .quill, #css-textbox {
 .ql-editor p {
     margin-top: 0;
     line-height: 2;
+}
+
+.link-button {
+    color: #007bff;
+    text-decoration: none;
+    background-color: transparent;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    display: inline;
+    margin: 0;
+    padding: 0;
+}
+
+.link-button:hover,
+.link-button:focus {
+    text-decoration: underline;
+}
+
+#advanced-submit {
+    width: 30% !important;
 }

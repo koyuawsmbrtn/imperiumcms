@@ -47,6 +47,14 @@ export default class Main extends React.Component {
     $("#upload-button").hide();
     $(".images-panel").hide();
     $("#images-button").hide();
+    $(".advanced-panel").hide()
+    $("#advanced-button").hide();
+
+    $(".metadata-warning button").click(function() {
+      void(0);
+      $(".metadata-warning").hide();
+      localStorage.setItem("metadata-warning-display", "false");
+    });
 
     $(".profile-picture").click(function() {
       $(".panel").hide();
@@ -57,6 +65,9 @@ export default class Main extends React.Component {
       if (localStorage.getItem("editor-type") === "visual") {
         $("#page-editor-html").val($(".ql-editor").html());
         localStorage.setItem("editor-type", "html");
+        if ($("#page-editor-html").val() === "<p><br></p>") {
+          $("#page-editor-html").val("");
+        }
       } else {
         $(".ql-editor").html($("#page-editor-html").val());
         $(".ql-editor").html($("#page-editor-html").val());
@@ -72,8 +83,6 @@ export default class Main extends React.Component {
         $("#page-editor-visual").hide();
         $("#page-editor-html").show();
       }
-      toggleeditor();
-      toggleeditor();
     }
 
     rendereditor();
@@ -151,9 +160,28 @@ export default class Main extends React.Component {
             $("#css-button").show();
             $("#upload-button").show();
             $("#images-button").show();
+            $("#advanced-button").show();
           }
         });
       }
+    });
+
+    $("#advanced-button").click(function() {
+      $(".panel").hide();
+      $(".advanced-panel").show();
+      $("#sitename-field").val(document.title);
+    });
+
+    $("#advanced-submit").click(function() {
+      var confv = "{\n\"appname\": \"" + $("#sitename-field").val() + "\",\n\"api\": \"" + config["api"] + "\"\n}";
+      $.post(config["api"] + "/api/v1/change/config/" + localStorage.getItem("username") + "/" + localStorage.getItem("sessionid"), {config: confv}, function(data) {
+        if (data["status"] === "success") {
+          localStorage.setItem("success", "true");
+          window.location.reload();
+        } else {
+          localStorage.setItem("error", "true");
+        }
+      });
     });
 
     $("#images-button").click(function() {
@@ -460,6 +488,7 @@ export default class Main extends React.Component {
                     <p><Button id="adduser-button">Add user</Button></p>
                     <p><Button id="deluser-button">Delete User</Button></p>
                     <p><Button id="css-button">Custom CSS</Button></p>
+                    <p><Button id="advanced-button">Advanced Settings</Button></p>
                   </div>
                   <p><Button id="logout" color="primary">Logout</Button></p>
                 </div>
@@ -545,7 +574,7 @@ export default class Main extends React.Component {
                           <Label for="upload-field">Choose image</Label>
                           <Input type="file" accept=".png,.gif,.jpg,.jpeg,.ico,.svg" name="upload-field" id="upload-field" />
                         </FormGroup>
-                        <p className="metadata-warning"><b>Warning:</b> While the image will be uploaded no metadata is being stripped out. Metadata may leak the location where the image has been shot at. <a href="javascript:metadatafine()">I'm fine with this.</a></p>
+                        <p className="metadata-warning"><b>Warning:</b> While the image will be uploaded no metadata is being stripped out. Metadata may leak the location where the image has been shot at. <button className="link-button">I'm fine with this.</button></p>
                         <Button id="upload-submit" color="primary">Upload</Button>
                       </div>
                       <div className="images-panel panel">
@@ -553,6 +582,19 @@ export default class Main extends React.Component {
                         <p>You can click on an image to delete it. To embed an image into the editor right-click, copy and paste.</p>
                         <div className="image-library">
                         </div>
+                      </div>
+                      <div className="advanced-panel panel">
+                        <h1>Advanced Settings</h1>
+                        <FormGroup row>
+                          <Label for="sitename-field">Site name</Label>
+                          <Input type="text" id="sitename-field" />
+                        </FormGroup>
+                        <FormGroup row>
+                          <Label for="apiserver-field">API server</Label>
+                          <Input type="text" id="apiserver-field" value={config["api"]} readOnly />
+                        </FormGroup>
+                        <Button id="advanced-submit" color="primary">Apply advanced settings</Button><br /><br />
+                        <p>You can change the API server field in <code>src/params.json</code> and rebuild with <code>npm run build</code></p>
                       </div>
                     </div>
             </div>

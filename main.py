@@ -5,26 +5,37 @@ import hashlib
 import json
 import os
 import os.path
+import sys
 import subprocess
 
 import redis
 from bottle import get, post, request, response, route, run, static_file
 
-if 'DOCKER' in os.environ:
-    if os.environ.get('DOCKER') == "true":
-        docker = True
-else:
-    docker = False
+data = None
 with open("src/params.json", "r") as file:
     data = json.load(file)  # pylint: disable=invalid-name
-with open("config.json", "r") as file:
-    config = json.load(file)  # pylint: disable=invalid-name
-salt = config["salt"]  # pylint: disable=invalid-name
 
-if docker == True:
-    dbhost = "db"
-else:
-    dbhost = "localhost"
+docker = None
+dbhost = None
+salt = None
+config = None
+
+def readconfig():
+    with open("src/params.json", "r") as file:
+        data = json.load(file)  # pylint: disable=invalid-name
+    with open("config.json", "r") as file:
+        config = json.load(file)  # pylint: disable=invalid-name
+    salt = config["salt"]  # pylint: disable=invalid-name
+    if 'DOCKER' in os.environ:
+        if os.environ.get('DOCKER') == "true":
+            docker = True
+    else:
+        docker = False
+    if docker == True:
+        dbhost = "db"
+    else:
+        dbhost = "localhost"
+
 # pylint: disable=invalid-name
 r = redis.StrictRedis(host=dbhost, port=6379, db=0)
 
@@ -274,6 +285,22 @@ def changecss(username, sid):
             file.write(content)
         return json.dumps({"status": "success"})
     return json.dumps({"error": "nochangecss"})
+
+@post("/api/v1/change/config/<username>/<sid>")
+def changeconfig(username, sid):
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    response.content_type = "application/json"
+    content = request.forms.get("config")  # pylint: disable=no-member
+    if (r.get("imperiumcms/users/" + username + "/role/") in (b"god", b"admin")
+            and r.get(
+                "imperiumcms/sessions/" + username + "/" + sid + "/login"
+            ) == b"true"):
+        with open("src/params.json", "w") as file:
+            file.write(content)
+        python = sys.executable
+        os.execl(python, python, * sys.argv)
+        return json.dumps({"status": "success"})
+    return json.dumps({"error": "nochangeconfig"})
 
 
 @get("/api/v1/get/css")
