@@ -11,10 +11,6 @@ import subprocess
 import redis
 from bottle import get, post, request, response, route, run, static_file
 
-data = None
-with open("src/params.json", "r") as file:
-    data = json.load(file)  # pylint: disable=invalid-name
-
 docker = None
 dbhost = None
 salt = None
@@ -70,15 +66,18 @@ def font(filepath):
 @get(r"/img/<filepath:re:.*\.(jpg|png|gif|ico|svg)>")
 def img(filepath):
     response.headers['Access-Control-Allow-Origin'] = '*'
-    ext = os.path.splitext(filepath)[1]
-    if ext == ".svg":
-        file = open("img/" + filepath, "r")
-        response.content_type = "image/svg+xml"
-    else:
-        file = open("img/" + filepath, "br")
-        response.content_type = "image/" + ext
-    with file:
-        return file.read()
+    try:
+        ext = os.path.splitext(filepath)[1]
+        if ext == ".svg":
+            file = open("img/" + filepath, "r")
+            response.content_type = "image/svg+xml"
+        else:
+            file = open("img/" + filepath, "br")
+            response.content_type = "image/" + ext
+        with file:
+            return file.read()
+    except:
+        pass
 
 
 @get("/static/js/<filepath>")
@@ -97,6 +96,8 @@ def content(path):
     response.headers['Access-Control-Allow-Origin'] = '*'
     if not path == "dashboard":
         with open("content/" + path + ".html") as file:
+            with open("src/params.json", "r") as fdat:
+                data = json.load(fdat)  # pylint: disable=invalid-name
             return file.read().replace("{{appname}}", data["appname"])
     return ""
 
@@ -108,6 +109,8 @@ def dashboard(username, sid):
             == b"true" and r.get("imperiumcms/users/" + username)
             == bytes(username.encode())):
         with open("content/dashboard.html") as file:
+            with open("src/params.json", "r") as fdat:
+                data = json.load(fdat)  # pylint: disable=invalid-name
             return file.read().replace("{{appname}}", data["appname"])
     return ""
 
@@ -297,8 +300,6 @@ def changeconfig(username, sid):
             ) == b"true"):
         with open("src/params.json", "w") as file:
             file.write(content)
-        python = sys.executable
-        os.execl(python, python, * sys.argv)
         return json.dumps({"status": "success"})
     return json.dumps({"error": "nochangeconfig"})
 
@@ -391,6 +392,8 @@ def manifest():
 def hello():
     response.headers['Access-Control-Allow-Origin'] = '*'
     response.content_type = "application/json"
+    with open("src/params.json", "r") as file:
+        data = json.load(file)  # pylint: disable=invalid-name
     return json.dumps({"appname": data["appname"]})
 
 
