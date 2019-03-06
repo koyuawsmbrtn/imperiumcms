@@ -1,3 +1,6 @@
+# 0.1.3
+- Fixed not being able to login on docker-composed instances
+
 # 0.1.2
 
 - Added advanced settings which allow you to change the site name or show the API endpoint
