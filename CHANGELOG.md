@@ -3,6 +3,7 @@
 - Added advanced settings which allow you to change the site name or show the API endpoint
 - Some UI cleanup on the dashboard
 - Fixed ESLint warnings
+- Backend won't throw random errors about profile pictures anymore
 
 # 0.1.1
 
