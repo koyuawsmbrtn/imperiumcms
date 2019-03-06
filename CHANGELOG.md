@@ -1,3 +1,9 @@
+# 0.1.2
+
+- Added advanced settings which allow you to change the site name or show the API endpoint
+- Some UI cleanup on the dashboard
+- Fixed ESLint warnings
+
 # 0.1.1
 
 - Added back to homepage link on dashboard login
