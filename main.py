@@ -388,7 +388,10 @@ def hello():
     response.content_type = "application/json"
     with open("src/params.json", "r") as file:
         data = json.load(file)  # pylint: disable=invalid-name
-    return json.dumps({"appname": data["appname"]})
+    with open("package.json", "r") as file:
+        data2 = json.load(file)  # pylint: disable=invalid-name
+    release = str(subprocess.check_output("git rev-parse --verify HEAD", shell=True)).replace("b'", "").replace("'", "").replace("\\n", "")
+    return json.dumps({"appname": data["appname"], "version": data2["version"], "release": release})
 
 
 @get("/")

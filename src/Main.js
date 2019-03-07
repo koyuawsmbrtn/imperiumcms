@@ -49,6 +49,7 @@ export default class Main extends React.Component {
     $("#images-button").hide();
     $(".advanced-panel").hide()
     $("#advanced-button").hide();
+    $(".about-panel").hide();
 
     $(".metadata-warning button").click(function() {
       void(0);
@@ -482,6 +483,14 @@ export default class Main extends React.Component {
       });
     });
 
+    $("#about-button").click(function() {
+      $(".panel").hide();
+      $.get(config["api"] + "/api/v1/config", function (data) {
+        $(".about-container").html("<p><img src=\"" + config["api"] + "/logo\" alt=\"Logo\" id=\"about-logo\"><br>This is ImperiumCMS version " + data["version"] + ".<br>ImperiumCMS is <a href=\"https://git.koyu.space/koyu/imperiumcms\" target=\"_blank\">open-source</a> software written in React and Python.<br>You are running release <code>" + data["release"] + "</code>.");
+      });
+      $(".about-panel").show();
+    });
+
     $.get(config["api"] + "/api/v1/get/dashboard/" + localStorage.getItem("username") + "/" + localStorage.getItem("sessionid"), function(data) {
       $(".front-panel").html(data);
     });
@@ -527,6 +536,7 @@ export default class Main extends React.Component {
                     <p><Button id="deluser-button">Delete User</Button></p>
                     <p><Button id="css-button">Custom CSS</Button></p>
                     <p><Button id="advanced-button">Advanced Settings</Button></p>
+                    <p><Button id="about-button">About</Button></p>
                   </div>
                   <p><Button id="logout" color="primary">Logout</Button></p>
                 </div>
@@ -633,6 +643,10 @@ export default class Main extends React.Component {
                         </FormGroup>
                         <Button id="advanced-submit" color="primary">Apply advanced settings</Button><br /><br />
                         <p>You can change the API server field in <code>src/params.json</code> and rebuild with <code>npm run build</code></p>
+                      </div>
+                      <div className="about-panel panel">
+                        <h1>About ImperiumCMS</h1>
+                        <div className="about-container"></div>
                       </div>
                     </div>
             </div>

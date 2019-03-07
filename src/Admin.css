@@ -43,6 +43,9 @@ h1, .panel .btn, .panel p, .quill, #css-textbox {
     body {
         background: #fff !important;
     }
+    #about-logo {
+        display: none;
+    }
 }
 
 .logo {
@@ -86,4 +89,8 @@ h1, .panel .btn, .panel p, .quill, #css-textbox {
 
 #advanced-submit {
     width: 40% !important;
+}
+
+#about-logo {
+    float: right;
 }
