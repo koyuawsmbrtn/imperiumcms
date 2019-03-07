@@ -385,14 +385,52 @@ export default class Main extends React.Component {
     });
 
     var currentPage = window.location.href.split("/")[3]
+    var page404 = '<head><title>app</title><meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"/> <style> a { color: #007bff; text-decoration: none; background-color: transparent;} a:hover { color: #0056b3; text-decoration: underline; } body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif; cursor: default; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: flex; flex-direction: column; } main, aside, section { display: flex; justify-content: center; align-items: center; flex-direction: column; } main { height: 100%; } aside { background: #000; flex-shrink: 1; padding: 30px 20px; } aside p { margin: 0; color: #999999; font-size: 14px; line-height: 24px; } aside a { color: #fff; text-decoration: none; } section span { font-size: 24px; font-weight: 500; display: block; border-bottom: 1px solid #EAEAEA; text-align: center; padding-bottom: 20px; width: 100px; } section p { font-size: 14px; font-weight: 400; } section span + p { margin: 20px 0 0 0; } @media (min-width: 768px) { section { height: 40px; flex-direction: row; margin-top: 42vh; } section span, section p { height: 100%; line-height: 40px; } section span { border-bottom: 0; border-right: 1px solid #EAEAEA; padding: 0 20px 0 0; width: auto; } section span + p { margin: 0; padding-left: 20px; } aside { padding: 50px 0; } aside p { max-width: 520px; text-align: center; } } </style></head><body> <main> <section> <span>404</span> <p>The requested path could not be found</p> </section> </main> <br> <br> <div style="display:block;text-align:center;"><a href="/">&larr; Back to homepage</a></div></body>';
     if (currentPage !== "" && currentPage !== "admin" && currentPage !== "dashboard") {
       $.get(config["api"] + "/api/v1/content/" + window.location.href.split("/")[3], function(data) {
         $(".jumbotron").html(data);
+        var title = data.split("\n")[0].replaceAll("<h1>", "").replaceAll("</h1>", "");
+        $.getJSON(config["api"] + "/api/v1/config", function(data) {
+          document.title = title + " - " + data["appname"];
+        }).fail(function() {
+          document.title = config["appname"];
+          $(".errorbackend").show();
+          $("a").attr("href", "");
+        });
+      }).fail(function() {
+        $("html").html(page404);
+        $.getJSON(config["api"] + "/api/v1/config", function(data) {
+          document.title = "404 - " + data["appname"];
+        }).fail(function() {
+          document.title = config["appname"];
+          $(".errorbackend").show();
+          $("a").attr("href", "");
+        });
       });
     }
-    if (currentPage === "" || currentPage === "dashboard") {
+    if (currentPage === "dashboard") {
+      $("html").html(page404);
+      $.getJSON(config["api"] + "/api/v1/config", function(data) {
+        document.title = "404 - " + data["appname"];
+      }).fail(function() {
+        document.title = config["appname"];
+        $(".errorbackend").show();
+        $("a").attr("href", "");
+      });
+    }
+
+    if (currentPage === "") {
       $.get(config["api"] + "/api/v1/content/home", function(data) {
         $(".jumbotron").html(data);
+        $.getJSON(config["api"] + "/api/v1/config", function(data) {
+          document.title = data["appname"];
+        }).fail(function() {
+          document.title = config["appname"];
+          $(".errorbackend").show();
+          $("a").attr("href", "");
+        });
+      }).fail(function() {
+        $("html").html(page404);
       });
     }
 
@@ -601,8 +639,7 @@ export default class Main extends React.Component {
           </div>
         </div>
         <Jumbotron>
-          <Login /><br /><br />
-          <a href="/">&larr; Back to homepage</a>
+          <Login />
         </Jumbotron>
       </div>
     );

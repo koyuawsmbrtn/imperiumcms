@@ -63,7 +63,8 @@ export default class Login extends React.Component {
                         <Input type="password" name="password" id="password" />
                     </FormGroup><br />
                     <div className="text-center">
-                        <Button color="primary" id="login">Login</Button>
+                        <Button color="primary" id="login">Login</Button><br /><br />
+                        <a href="/" style={{float: "left"}}>&larr; Back to homepage</a>
                     </div>
                 </div>
             </div>
