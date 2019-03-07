@@ -1,3 +1,7 @@
+# 0.1.4
+- New about page
+- New 404 page
+
 # 0.1.3
 - Fixed not being able to login on docker-composed instances
 
