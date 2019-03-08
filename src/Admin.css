@@ -28,7 +28,7 @@ h1, .panel .btn, .panel p, .quill, #css-textbox {
 }
 
 .admin-panel {
-    padding-top: 60px;
+    padding-top: 10px;
 }
 
 @media(min-width:800px) {
