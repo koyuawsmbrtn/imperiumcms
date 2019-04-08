@@ -265,7 +265,7 @@ def deluser(username, sid, usertodelete):
 def getpages():
     response.headers['Access-Control-Allow-Origin'] = '*'
     response.content_type = "application/json"
-    plist = os.popen("ls content/").read().replace(".html", "").split("\n")
+    plist = os.popen("ls content/ | sort").read().replace(".html", "").split("\n")
     return json.dumps(plist)
 
 
