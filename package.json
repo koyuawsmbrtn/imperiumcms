@@ -1,6 +1,6 @@
 {
   "name": "imperiumcms",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "private": true,
   "dependencies": {
     "bootstrap": "^4.2.1",
