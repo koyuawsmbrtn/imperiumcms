@@ -62,6 +62,18 @@ export default class Main extends React.Component {
       $(".front-panel").show();
     });
 
+    // https://stackoverflow.com/a/6660151 because I suck
+    function stripscripts(s) {
+      var div = document.createElement('div');
+      div.innerHTML = s;
+      var scripts = div.getElementsByTagName('script');
+      var i = scripts.length;
+      while (i--) {
+        scripts[i].parentNode.removeChild(scripts[i]);
+      }
+      return div.innerHTML;
+    }
+
     function toggleeditor() {
       if (localStorage.getItem("editor-type") === "visual") {
         $("#page-editor-html").val($(".ql-editor").html());
@@ -70,8 +82,7 @@ export default class Main extends React.Component {
           $("#page-editor-html").val("");
         }
       } else {
-        $(".ql-editor").html($("#page-editor-html").val());
-        $(".ql-editor").html($("#page-editor-html").val());
+        $(".ql-editor").html(stripscripts($("#page-editor-html").val()));
         localStorage.setItem("editor-type", "visual");
       }
     }
@@ -322,7 +333,7 @@ export default class Main extends React.Component {
     $("#select-page").change(function() {
       $.get(config["api"] + "/api/v1/content/" + $("#select-page").val(), function(data) {
         $("#title-page").val(data.split("\n")[0].replace("<h1>", "").replace("</h1>", ""));
-        $(".ql-editor").html(data.split("\n").slice(1).join("\n"));
+        $(".ql-editor").html(stripscripts(data.split("\n").slice(1).join("\n")));
         $("#permalink").html($("#select-page").val());
         $("#page-editor-html").val($(".ql-editor").html().replaceAll("<p><br></p>", ""));
         rendereditor();
