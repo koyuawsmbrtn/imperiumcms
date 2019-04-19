@@ -29,8 +29,6 @@ REBUILD: Build the frontend on start
 BROWSER: Start your default browser with ImperiumCMS
 ```
 
-There is also a Dockerfile in case you want that, but it is slightly broken (if you remove the container, you'll lose all data).
-
 ## Found a bug?
 
 Message support@koyu.space!
