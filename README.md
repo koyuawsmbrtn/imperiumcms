@@ -29,6 +29,10 @@ REBUILD: Build the frontend on start
 BROWSER: Start your default browser with ImperiumCMS
 ```
 
+## License
+
+[![FOSSA Status](https://app.fossa.com/api/projects/custom%2B11189%2Fgit.koyu.space%2Fkoyu%2Fimperiumcms.svg?type=large)](https://app.fossa.com/projects/custom%2B11189%2Fgit.koyu.space%2Fkoyu%2Fimperiumcms?ref=badge_large)
+
 ## Found a bug?
 
 Message support@koyu.space!
